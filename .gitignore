@@ -1,0 +1,15 @@
+# Java
+**/target/
+*.class
+*.jar
+*.war
+*.iml
+
+# Node / Angular
+**/node_modules/
+**/dist/
+**/.angular/
+
+# OS files
+.DS_Store
+Thumbs.db
