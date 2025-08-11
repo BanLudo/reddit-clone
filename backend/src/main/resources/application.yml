@@ -2,6 +2,8 @@ server:
   port: 8080
 
 spring:
+  profiles:
+    active: local
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -10,7 +12,12 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    url: jdbc:postgresql://localhost:5432/reddit_clone
-    username: reddit_clone
-    password:
+    url: ${DB_URL}
+    username: your_username
+    password: your_password
     driver-class-name: org.postgresql.Driver
+
+
+jwt:
+  expiration: 86400000 #24h en millisecondes
+  secret: ${JWT_SECRET}
