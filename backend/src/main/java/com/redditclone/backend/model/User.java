@@ -24,7 +24,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    //@Column(nullable = false) normalement je vais le rendre obligatoire !! mais pour test postman, on le laisse.
     private String profilePicture;
 
     @CreationTimestamp

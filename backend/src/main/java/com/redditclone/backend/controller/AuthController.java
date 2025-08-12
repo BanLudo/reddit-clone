@@ -1,5 +1,6 @@
 package com.redditclone.backend.controller;
 
+import com.redditclone.backend.DTO.AuthDto;
 import com.redditclone.backend.DTO.RegisterRequest;
 import com.redditclone.backend.service.AuthService;
 import jakarta.validation.Valid;
@@ -18,7 +19,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest registerRequest){
-        return null;
+    public ResponseEntity<AuthDto> register(@Valid @RequestBody RegisterRequest registerRequest){
+        AuthDto response = authService.register(registerRequest);
+        return ResponseEntity.ok(response);
     }
 }

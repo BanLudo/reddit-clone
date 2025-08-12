@@ -27,4 +27,5 @@ public class RegisterRequest {
         this.username = username;
         this.password = password;
     }
+
 }

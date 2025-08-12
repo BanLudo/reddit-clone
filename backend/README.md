@@ -32,4 +32,4 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
  - ordre : Register (controller, service, ) c'est à dire l'authentification > login via mail > securite >
  - École 1 : "Register + Auto-Login" vs École 2 : "Register seulement" 
           ==> on va choisir comme reddit c'est à dire école 1, donc on va généré un token d'auth lors du l'enregistrement
-@Faire ==> faire le controller, et tester postman.
+@Faire ==> prochaine étape : le login.
