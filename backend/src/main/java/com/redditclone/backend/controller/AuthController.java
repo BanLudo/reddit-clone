@@ -1,6 +1,7 @@
 package com.redditclone.backend.controller;
 
 import com.redditclone.backend.DTO.AuthDto;
+import com.redditclone.backend.DTO.LoginRequest;
 import com.redditclone.backend.DTO.RegisterRequest;
 import com.redditclone.backend.service.AuthService;
 import jakarta.validation.Valid;
@@ -21,6 +22,12 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<AuthDto> register(@Valid @RequestBody RegisterRequest registerRequest){
         AuthDto response = authService.register(registerRequest);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthDto> login(@Valid @RequestBody LoginRequest loginRequest){
+        AuthDto response = authService.login(loginRequest);
         return ResponseEntity.ok(response);
     }
 }
