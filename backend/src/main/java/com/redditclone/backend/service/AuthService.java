@@ -6,14 +6,11 @@ import com.redditclone.backend.DTO.RegisterRequest;
 import com.redditclone.backend.DTO.UserDto;
 import com.redditclone.backend.model.User;
 import com.redditclone.backend.repository.UserRepository;
-import com.redditclone.backend.service.jwt.JwtTokenProvider;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import com.redditclone.backend.security.JwtTokenProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,13 +19,19 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
+
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.authenticationManager = authenticationManager;
+    }
 
     @Transactional
     public AuthDto register(RegisterRequest registerRequest) {
@@ -69,4 +72,7 @@ public class AuthService {
 
         return new AuthDto(jwt,new UserDto(optionalUser.get()));
     }
+
+
+
 }
