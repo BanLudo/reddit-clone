@@ -2,14 +2,12 @@ package com.redditclone.backend.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Data
 @Table(name = "subreddit")
 public class Subreddit {
 
@@ -25,8 +23,8 @@ public class Subreddit {
     @NotBlank(message = "Description is required")
     private String description;
 
-    @OneToMany(mappedBy = "subreddit",cascade = CascadeType.ALL)
-    private List<Post> posts;
+    /*@OneToMany(mappedBy = "subreddit",cascade = CascadeType.ALL)
+    private List<Post> posts;*/
 
     @ManyToOne
     @JoinColumn(name = "author_id")

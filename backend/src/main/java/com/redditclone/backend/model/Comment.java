@@ -1,13 +1,11 @@
 package com.redditclone.backend.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Data
 @Table(name = "comments")
 public class Comment {
 
@@ -22,9 +20,9 @@ public class Comment {
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    /*@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
+    private Post post;*/
 
     private int upvoteComment = 0;
     private int downvoteComment = 0;

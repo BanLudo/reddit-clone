@@ -7,7 +7,6 @@ import com.redditclone.backend.DTO.UserDto;
 import com.redditclone.backend.model.User;
 import com.redditclone.backend.repository.UserRepository;
 import com.redditclone.backend.security.JwtTokenProvider;
-import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

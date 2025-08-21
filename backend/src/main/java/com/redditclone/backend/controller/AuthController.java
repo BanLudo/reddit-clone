@@ -5,7 +5,6 @@ import com.redditclone.backend.DTO.LoginRequest;
 import com.redditclone.backend.DTO.RegisterRequest;
 import com.redditclone.backend.service.AuthService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

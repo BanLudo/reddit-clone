@@ -2,7 +2,6 @@ package com.redditclone.backend.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -10,7 +9,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "posts")
-@Data
 public class Post {
 
     @Id
@@ -26,19 +24,19 @@ public class Post {
 
     private String imageUrl;
 
-    @ManyToOne
+    /*@ManyToOne
     @JoinColumn(name = "subreddit_id", nullable = false)
-    private Subreddit subreddit;
+    private Subreddit subreddit;*/
 
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<Comment> comments;
+    /*@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Comment> comments;*/
 
-    private int upvotePost = 0;
-    private int downvotePost = 0;
+    private Integer upvotePost = 0;
+    private Integer downvotePost = 0;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -51,5 +49,83 @@ public class Post {
         this.author = author;
     }
 
+    public Long getPostId() {
+        return postId;
+    }
 
+    public void setPostId(Long postId) {
+        this.postId = postId;
+    }
+
+    public @NotBlank(message = "Title is required") String getTitle() {
+        return title;
+    }
+
+    public void setTitle(@NotBlank(message = "Title is required") String title) {
+        this.title = title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    /*public Subreddit getSubreddit() {
+        return subreddit;
+    }
+
+    public void setSubreddit(Subreddit subreddit) {
+        this.subreddit = subreddit;
+    }*/
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    public int getUpvotePost() {
+        return upvotePost;
+    }
+
+    public void setUpvotePost(int upvotePost) {
+        this.upvotePost = upvotePost;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public int getDownvotePost() {
+        return downvotePost;
+    }
+
+    public void setDownvotePost(int downvotePost) {
+        this.downvotePost = downvotePost;
+    }
+
+    /*public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }*/
 }

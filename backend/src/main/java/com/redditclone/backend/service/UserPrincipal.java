@@ -1,7 +1,6 @@
 package com.redditclone.backend.service;
 
 import com.redditclone.backend.model.User;
-import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

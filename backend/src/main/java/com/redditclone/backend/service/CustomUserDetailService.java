@@ -2,7 +2,6 @@ package com.redditclone.backend.service;
 
 import com.redditclone.backend.model.User;
 import com.redditclone.backend.repository.UserRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
