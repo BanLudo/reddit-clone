@@ -4,6 +4,7 @@ import com.redditclone.backend.DTO.UserDto;
 import com.redditclone.backend.model.User;
 import com.redditclone.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -26,6 +27,7 @@ public class UserService {
         return new UserDto(user);
     }
 
+    @Transactional
     public UserDto updateProfile(String userEmail, UserDto userDto) {
         Optional<User> optionalUser = userRepository.findByEmail(userEmail);
 

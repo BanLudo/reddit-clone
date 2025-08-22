@@ -15,8 +15,6 @@ public class PostRequest {
     private String imageUrl;
     private String author;
     private LocalDateTime createdAt;
-    private int upvotes;
-    private Integer downvotes;
     private Integer commentCount;
 
     public PostRequest() {}
@@ -28,9 +26,6 @@ public class PostRequest {
         this.imageUrl = post.getImageUrl();
         this.author = post.getAuthor().getUsername();
         this.createdAt = post.getCreatedAt();
-        this.upvotes = post.getUpvotePost();
-        this.downvotes = post.getDownvotePost();
-        /*this.commentCount = post.getComments() != null ?  0 : post.getComments().size();*/
     }
 
     public long getPostId() {
@@ -79,22 +74,6 @@ public class PostRequest {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public int getUpvotes() {
-        return upvotes;
-    }
-
-    public void setUpvotes(int upvotes) {
-        this.upvotes = upvotes;
-    }
-
-    public Integer getDownvotes() {
-        return downvotes;
-    }
-
-    public void setDownvotes(Integer downvotes) {
-        this.downvotes = downvotes;
     }
 
     public Integer getCommentCount() {
