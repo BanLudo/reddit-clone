@@ -8,6 +8,7 @@ import com.redditclone.backend.repository.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,6 +70,15 @@ public class PostService {
 
     public Page<PostRequest> getAllPosts(Pageable pageable) {
         return postRepository.findAllByOrderByCreatedAtDesc(pageable)
+                             .map(post -> new PostRequest(post));
+    }
+
+
+    public Page<PostRequest> getAllPostsByUsers(String username, Pageable pageable) {
+        User user = userRepository.findByUsername(username)
+                                  .orElseThrow(()-> new UsernameNotFoundException("User not found"));
+
+        return postRepository.findByAuthor(user, pageable)
                              .map(post -> new PostRequest(post));
     }
 }

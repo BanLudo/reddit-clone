@@ -9,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/comments")
 public class CommentController {
@@ -25,10 +28,14 @@ public class CommentController {
         CommentResponseDTO createdComment = commentService.createComment(userEmail, request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdComment);
-
     }
 
-    /*
+    @GetMapping("/post/{postId}")
+    public ResponseEntity<List<CommentResponseDTO>> getAllCommentsByPost(@PathVariable Long postId){
+        List<CommentResponseDTO> comments = commentService.getAllCommentsByPost(postId);
+        return ResponseEntity.ok(comments);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCommentById(@PathVariable Long id, Authentication authentication) {
         String userEmail = authentication.getName();
@@ -36,29 +43,26 @@ public class CommentController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CommentRequest> updateComment(@Valid @RequestBody CommentRequest commentRequest, Authentication authentication) {
-        String userEmail = authentication.getName();
-        CommentRequest commentUpdated = commentService.updateComment(userEmail, commentRequest);
-        return new ResponseEntity<>(commentUpdated, HttpStatus.OK);
-    }
-
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<CommentRequest>> getAllCommentsByUser(@PathVariable Long userId) {
-        List<CommentRequest> comments = commentService.getAllCommentsByUser(userId);
-        return new ResponseEntity<>(comments, HttpStatus.OK);
-    }
+    public ResponseEntity<List<CommentResponseDTO>> getAllCommentsByUser(@PathVariable Long userId) {
+        List<CommentResponseDTO> comments = commentService.getAllCommentsByUser(userId);
 
-    @GetMapping("/post/{postId}")
-    public ResponseEntity<List<CommentRequest>> getAllCommentsByPost(@PathVariable Long postId){
-        List<CommentRequest> comments = commentService.getAllCommentsByPost(postId);
-        return new ResponseEntity<>(comments, HttpStatus.OK);
+        return ResponseEntity.ok(comments);
     }
 
     @GetMapping("/{commentId}/replies")
-    public ResponseEntity<List<CommentRequest>> getAllRepliesByComment(@PathVariable Long commentId){
-        List<CommentRequest> replies = commentService.getAllRepliesByComment(commentId);
-        return new ResponseEntity<>(replies, HttpStatus.OK);
-    } */
+    public ResponseEntity<List<CommentResponseDTO>> getAllRepliesByComment(@PathVariable Long commentId){
+        List<CommentResponseDTO> replies = commentService.getAllRepliesByComment(commentId);
+        return ResponseEntity.ok(replies);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CommentResponseDTO> updateComment(@PathVariable Long id, @Valid @RequestBody CreateCommentDTO updateRequest, Authentication authentication) throws AccessDeniedException {
+        String userEmail = authentication.getName();
+        CommentResponseDTO commentUpdated = commentService.updateComment(id, userEmail, updateRequest);
+        return ResponseEntity.ok(commentUpdated);
+    }
+
+
 
 }

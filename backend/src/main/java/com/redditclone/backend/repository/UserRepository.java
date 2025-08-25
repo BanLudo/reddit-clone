@@ -15,4 +15,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @NotBlank(message = "Email is required")
     Optional<User> findByEmail(String email);
 
+    Optional<User> findByUsername(String username);
 }

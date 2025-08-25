@@ -3,6 +3,7 @@ package com.redditclone.backend.service;
 import com.redditclone.backend.DTO.UserDto;
 import com.redditclone.backend.model.User;
 import com.redditclone.backend.repository.UserRepository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,14 +42,10 @@ public class UserService {
         return new UserDto(user);
     }
 
+    public UserDto getUserByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(()-> new UsernameNotFoundException("Username " + username + " not found"));
 
-    public UserDto getUserById(Long userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()) {
-            throw new RuntimeException("User not found with Id of " + userId);
-        }
-        User user = optionalUser.get();
         return new UserDto(user);
     }
-
 }

@@ -50,4 +50,13 @@ public class PostController {
     }
 
 
+    @GetMapping("/user/{username}")
+    public ResponseEntity<Page<PostRequest>> getAllPostsByUsers(@PathVariable String username,
+                                                                @RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "10")int size){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<PostRequest> postsRequestByUsers = postService.getAllPostsByUsers(username, pageable);
+        return ResponseEntity.ok(postsRequestByUsers);
+    }
+
 }

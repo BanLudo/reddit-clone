@@ -31,9 +31,9 @@ public class UserController {
         return ResponseEntity.ok(updatedProfiled);
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long userId) {
-        UserDto user = userService.getUserById(userId);
+    @GetMapping("/{username}")
+    public ResponseEntity<UserDto> getUserByUsername(@PathVariable String username) {
+        UserDto user = userService.getUserByUsername(username);
         return ResponseEntity.ok(user);
     }
 

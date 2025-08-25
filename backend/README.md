@@ -31,3 +31,4 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
  - A completer implémentation searchPosts après la partie Front.
 
  - @Faire ==> methode post à implementer : la structure des comments ajouter aux posts - API gestion de commentaires.
+ - @A implementer : GetPostsByUser
