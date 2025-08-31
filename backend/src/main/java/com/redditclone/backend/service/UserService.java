@@ -3,6 +3,9 @@ package com.redditclone.backend.service;
 import com.redditclone.backend.DTO.UserDto;
 import com.redditclone.backend.model.User;
 import com.redditclone.backend.repository.UserRepository;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,13 +21,20 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public UserDto getCurrentUser(String userEmail) {
-        Optional<User> optionalUser = userRepository.findByEmail(userEmail);
+    @Transactional(readOnly = true)
+    public UserDto getCurrentUser() {
 
-        if (optionalUser.isEmpty()) {
-            throw new RuntimeException("User not found");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal)) {
+            throw new RuntimeException("User not authenticated");
         }
-        User user = optionalUser.get();
+
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+
+        User user = userRepository.findById(userPrincipal.getUserId())
+                                  .orElseThrow(()-> new UsernameNotFoundException("User not found"));
+
         return new UserDto(user);
     }
 

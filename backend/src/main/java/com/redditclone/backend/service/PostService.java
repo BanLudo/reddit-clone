@@ -38,6 +38,7 @@ public class PostService {
         post.setContent(postRequest.getContent());
         post.setImageUrl(postRequest.getImageUrl());
         post.setAuthor(OptionalUser.get());
+        post.setVoteCount(postRequest.getVoteCount());
 
         Post savedPost = postRepository.save(post);
 

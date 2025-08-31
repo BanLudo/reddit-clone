@@ -32,8 +32,13 @@ public class Comment {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Comment> replies;
 
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
+    private List<Vote> votes;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    private int voteCount = 0; // score de vote comment
 
     public Comment(){}
 
@@ -97,5 +102,21 @@ public class Comment {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<Vote> getVotes() {
+        return votes;
+    }
+
+    public void setVotes(List<Vote> votes) {
+        this.votes = votes;
+    }
+
+    public int getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(int voteCount) {
+        this.voteCount = voteCount;
     }
 }

@@ -16,6 +16,8 @@ public class PostRequest {
     private String author;
     private LocalDateTime createdAt;
     private Integer commentCount;
+    private int voteCount;
+
 
     public PostRequest() {}
 
@@ -26,6 +28,7 @@ public class PostRequest {
         this.imageUrl = post.getImageUrl();
         this.author = post.getAuthor().getUsername();
         this.createdAt = post.getCreatedAt();
+        this.voteCount = post.getVoteCount();
     }
 
     public long getPostId() {
@@ -82,5 +85,13 @@ public class PostRequest {
 
     public void setCommentCount(Integer commentCount) {
         this.commentCount = commentCount;
+    }
+
+    public int getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(int voteCount) {
+        this.voteCount = voteCount;
     }
 }

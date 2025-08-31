@@ -8,6 +8,7 @@ import com.redditclone.backend.model.User;
 import com.redditclone.backend.repository.CommentRepository;
 import com.redditclone.backend.repository.PostRepository;
 import com.redditclone.backend.repository.UserRepository;
+import com.redditclone.backend.repository.VoteRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,11 +26,13 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final VoteRepository voteRepository;
 
-    public CommentService(CommentRepository commentRepository, UserRepository userRepository, PostRepository postRepository) {
+    public CommentService(CommentRepository commentRepository, UserRepository userRepository, PostRepository postRepository, VoteRepository voteRepository) {
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.postRepository = postRepository;
+        this.voteRepository = voteRepository;
     }
 
 

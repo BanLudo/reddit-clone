@@ -33,8 +33,14 @@ public class Post {
     @JsonIgnore
     private List<Comment> comments;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Vote> votes;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+
+    private int voteCount = 0; // score de vote post
 
     public Post() {}
 
@@ -99,5 +105,21 @@ public class Post {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public List<Vote> getVotes() {
+        return votes;
+    }
+
+    public void setVotes(List<Vote> votes) {
+        this.votes = votes;
+    }
+
+    public int getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(int voteCount) {
+        this.voteCount = voteCount;
     }
 }
