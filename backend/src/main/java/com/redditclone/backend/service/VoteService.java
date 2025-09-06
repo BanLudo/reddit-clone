@@ -93,7 +93,7 @@ public class VoteService {
     private void updatePostVoteCount(Post post) {
         Long upvotes = voteRepository.countByPostIdAndVoteType(post.getId(), VoteType.UPVOTE);
         Long downvotes = voteRepository.countByPostIdAndVoteType(post.getId(), VoteType.DOWNVOTE);
-        post.setVoteCount(Math.toIntExact(upvotes + downvotes));
+        post.setVoteCount(Math.toIntExact(upvotes - downvotes));
         postRepository.save(post);
     }
 
@@ -101,7 +101,7 @@ public class VoteService {
     private void updateCommentVoteCount(Comment comment) {
         Long upvotes = voteRepository.countByPostIdAndVoteType(comment.getId(), VoteType.UPVOTE);
         Long downvotes = voteRepository.countByPostIdAndVoteType(comment.getId(), VoteType.DOWNVOTE);
-        comment.setVoteCount(Math.toIntExact(upvotes + downvotes));
+        comment.setVoteCount(Math.toIntExact(upvotes - downvotes));
         commentRepository.save(comment);
     }
 

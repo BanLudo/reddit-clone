@@ -1,9 +1,6 @@
 package com.redditclone.backend.DTO;
 
-import com.redditclone.backend.model.User;
-
 import java.time.LocalDateTime;
-
 
 public class UserProfile {
     private Long id;

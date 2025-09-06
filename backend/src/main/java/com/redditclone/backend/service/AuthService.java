@@ -53,7 +53,7 @@ public class AuthService {
 
         User savedUser = userRepository.save(user);
 
-        return new ApiResponse(true, "User registered successfully");
+        return new ApiResponse(true, signUpRequest.getUsername()+ " registered successfully.");
     }
 
 
@@ -70,7 +70,10 @@ public class AuthService {
 
         String token = jwtTokenProvider.generateToken(authResult);
 
-        return new AuthResponse(token);
+        Long userId = jwtTokenProvider.getUserIdFromJwt(token);
+        User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("no user ??"));
+
+        return new AuthResponse(token, user.getUsername());
 
     }
 
