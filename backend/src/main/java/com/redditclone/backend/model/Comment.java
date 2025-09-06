@@ -1,10 +1,13 @@
 package com.redditclone.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "comments")
@@ -12,64 +15,72 @@ public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long commentId;
+    private Long id;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Lob
+    @NotBlank(message = "comment is required")
     private String content;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false)
-    private User author;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Comment parent;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-    private List<Comment> replies;
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Comment> replies = new HashSet<>();
 
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
-    private List<Vote> votes;
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Vote> votes = new HashSet<>();
 
+    private Integer voteCount = 0; // score de vote post
     @CreationTimestamp
     private LocalDateTime createdAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
-    private int voteCount = 0; // score de vote comment
 
     public Comment(){}
 
-    public Comment(String content, Post post, User author) {
+    /*public Comment(String content, Post post, User author) {
         this.content = content;
         this.post = post;
         this.author = author;
+    }*/
+
+    public Comment(Long id, String content, Post post, User user, Comment parent, Set<Comment> replies, Set<Vote> votes, Integer voteCount, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.content = content;
+        this.post = post;
+        this.user = user;
+        this.parent = parent;
+        this.replies = replies;
+        this.votes = votes;
+        this.voteCount = voteCount;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
-    public Long getCommentId() {
-        return commentId;
+    public Long getId() {
+        return id;
     }
 
-    public void setCommentId(Long commentId) {
-        this.commentId = commentId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getContent() {
+    public @NotBlank(message = "comment is required") String getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    public void setContent(@NotBlank(message = "comment is required") String content) {
         this.content = content;
-    }
-
-    public User getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(User author) {
-        this.author = author;
     }
 
     public Post getPost() {
@@ -80,6 +91,14 @@ public class Comment {
         this.post = post;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public Comment getParent() {
         return parent;
     }
@@ -88,12 +107,28 @@ public class Comment {
         this.parent = parent;
     }
 
-    public List<Comment> getReplies() {
+    public Set<Comment> getReplies() {
         return replies;
     }
 
-    public void setReplies(List<Comment> replies) {
+    public void setReplies(Set<Comment> replies) {
         this.replies = replies;
+    }
+
+    public Set<Vote> getVotes() {
+        return votes;
+    }
+
+    public void setVotes(Set<Vote> votes) {
+        this.votes = votes;
+    }
+
+    public Integer getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(Integer voteCount) {
+        this.voteCount = voteCount;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -104,19 +139,11 @@ public class Comment {
         this.createdAt = createdAt;
     }
 
-    public List<Vote> getVotes() {
-        return votes;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setVotes(List<Vote> votes) {
-        this.votes = votes;
-    }
-
-    public int getVoteCount() {
-        return voteCount;
-    }
-
-    public void setVoteCount(int voteCount) {
-        this.voteCount = voteCount;
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

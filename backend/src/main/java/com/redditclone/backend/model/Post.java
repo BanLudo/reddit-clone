@@ -3,10 +3,13 @@ package com.redditclone.backend.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "posts")
@@ -14,64 +17,88 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postId;
+    private Long id;
 
     @Column(nullable = false)
     @NotBlank(message = "Title is required")
+    @Size(max = 300)
     private String title;
 
-    @Column(columnDefinition = "TEXT")
-    private String content;
+    @Lob
+    private String content; //Long texte.
 
     private String imageUrl;
 
     @ManyToOne
-    @JoinColumn(name = "author_id", nullable = false)
-    private User author;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Comment> comments;
+    private Set<Comment> comments = new HashSet<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<Vote> votes;
+    private Set<Vote> votes = new HashSet<>();
 
+    private Integer voteCount = 0; // score de vote post
     @CreationTimestamp
     private LocalDateTime createdAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
+    public Post(){}
 
-    private int voteCount = 0; // score de vote post
-
-    public Post() {}
-
-    public Post(User author, String title, String content) {
-        this.title = title;
+    public Post(Long id, LocalDateTime updatedAt, LocalDateTime createdAt, int voteCount1, Set<Vote> votes, Set<Comment> comments, User user, String imageUrl, String content, String title) {
+        this.id = id;
+        this.updatedAt = updatedAt;
+        this.createdAt = createdAt;
+        this.voteCount = voteCount1;
+        this.votes = votes;
+        this.comments = comments;
+        this.user = user;
+        this.imageUrl = imageUrl;
         this.content = content;
-        this.author = author;
-    }
-
-    public Long getPostId() {
-        return postId;
-    }
-
-    public void setPostId(Long postId) {
-        this.postId = postId;
-    }
-
-    public @NotBlank(message = "Title is required") String getTitle() {
-        return title;
-    }
-
-    public void setTitle(@NotBlank(message = "Title is required") String title) {
         this.title = title;
     }
 
-    public String getContent() {
-        return content;
+    public Long getId() {
+        return id;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public int getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(int voteCount) {
+        this.voteCount = voteCount;
+    }
+
+    public Set<Vote> getVotes() {
+        return votes;
+    }
+
+    public void setVotes(Set<Vote> votes) {
+        this.votes = votes;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getImageUrl() {
@@ -82,14 +109,29 @@ public class Post {
         this.imageUrl = imageUrl;
     }
 
-    public User getAuthor() {
-        return author;
+    public String getContent() {
+        return content;
     }
 
-    public void setAuthor(User author) {
-        this.author = author;
+    public void setContent(String content) {
+        this.content = content;
     }
 
+    public @NotBlank(message = "Title is required") @Size(max = 300) String getTitle() {
+        return title;
+    }
+
+    public void setTitle(@NotBlank(message = "Title is required") @Size(max = 300) String title) {
+        this.title = title;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
@@ -97,29 +139,5 @@ public class Post {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
-
-    public List<Vote> getVotes() {
-        return votes;
-    }
-
-    public void setVotes(List<Vote> votes) {
-        this.votes = votes;
-    }
-
-    public int getVoteCount() {
-        return voteCount;
-    }
-
-    public void setVoteCount(int voteCount) {
-        this.voteCount = voteCount;
     }
 }

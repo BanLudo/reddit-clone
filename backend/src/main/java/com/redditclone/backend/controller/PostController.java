@@ -1,14 +1,18 @@
 package com.redditclone.backend.controller;
 
 import com.redditclone.backend.DTO.PostRequest;
+import com.redditclone.backend.DTO.PostResponse;
 import com.redditclone.backend.service.PostService;
+import com.redditclone.backend.service.UserPrincipal;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,34 +25,43 @@ public class PostController {
         this.postService = postService;
     }
 
-    @PostMapping
-    public ResponseEntity<PostRequest> createPost(@Valid @RequestBody PostRequest postRequest, Authentication authentication) {
-        String userEmail = authentication.getName();
-        PostRequest createdPost = postService.createdPost(userEmail, postRequest);
-        return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
+
+    @GetMapping
+    public Page<PostResponse> getAllPosts(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                    @RequestParam(value = "size", defaultValue = "10") int size,
+                                                    @RequestParam(value = "sort", defaultValue = "new") String sort) {
+        return postService.getAllPosts(page, size, sort);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostRequest> getPostById(@PathVariable Long id) {
-        PostRequest postRequest = postService.getPostById(id);
-        return ResponseEntity.ok(postRequest);
+    public ResponseEntity<PostResponse> getPostById(@PathVariable Long id) {
+        PostResponse post = postService.getPostById(id);
+        return ResponseEntity.ok(post);
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<PostResponse> createPost(@Valid @RequestBody PostRequest postRequest, @AuthenticationPrincipal UserPrincipal currentUser) {
+
+        PostResponse createdPost = postService.createdPost(currentUser, postRequest);
+        return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<PostResponse> updatePost(@PathVariable Long id, @Valid @RequestBody PostRequest postRequest, @AuthenticationPrincipal UserPrincipal currentUser) {
+        PostResponse updatedPost = postService.updatePost(id, postRequest, currentUser);
+        return new ResponseEntity<>(updatedPost, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePostById(@PathVariable Long id, Authentication authentication) {
-        String userEmail = authentication.getName();
-        postService.deletePost(id, userEmail);
-        return ResponseEntity.noContent().build();
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> deletePostById(@PathVariable Long id, @AuthenticationPrincipal UserPrincipal currentUser) {
+        postService.deletePost(id, currentUser);
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping
-    public ResponseEntity<Page<PostRequest>> getAllPosts(@RequestParam(defaultValue = "0") int page,
-                                                         @RequestParam(defaultValue = "10")int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<PostRequest> postRequests = postService.getAllPosts(pageable);
-        return ResponseEntity.ok(postRequests);
-    }
-
+    /*
 
     @GetMapping("/user/{username}")
     public ResponseEntity<Page<PostRequest>> getAllPostsByUsers(@PathVariable String username,
@@ -57,6 +70,6 @@ public class PostController {
         Pageable pageable = PageRequest.of(page, size);
         Page<PostRequest> postsRequestByUsers = postService.getAllPostsByUsers(username, pageable);
         return ResponseEntity.ok(postsRequestByUsers);
-    }
+    } */
 
 }

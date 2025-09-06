@@ -1,7 +1,7 @@
 package com.redditclone.backend.service;
 
-import com.redditclone.backend.DTO.comment.CommentResponseDTO;
-import com.redditclone.backend.DTO.comment.CreateCommentDTO;
+import com.redditclone.backend.DTO.comment.CommentRequest;
+import com.redditclone.backend.DTO.comment.CommentResponse;
 import com.redditclone.backend.model.Comment;
 import com.redditclone.backend.model.Post;
 import com.redditclone.backend.model.User;
@@ -10,12 +10,12 @@ import com.redditclone.backend.repository.PostRepository;
 import com.redditclone.backend.repository.UserRepository;
 import com.redditclone.backend.repository.VoteRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,59 +35,90 @@ public class CommentService {
         this.voteRepository = voteRepository;
     }
 
+    public List<CommentResponse> getAllCommentsByPostId(Long postId) {
+        List<Comment> comments = commentRepository.findByPost_IdAndParentIsNullOrderByVoteCountDesc(postId);
 
-    public CommentResponseDTO createComment(String userEmail, CreateCommentDTO commentRequest) {
-        User user = userRepository.findByEmail(userEmail)
-                                  .orElseThrow(() -> new RuntimeException("User not found"));
-        Post post = postRepository.findById(commentRequest.getPostId())
-                                  .orElseThrow(() -> new RuntimeException("Post Not Found"));
+        return comments.stream()
+                .map(this::mapToCommentResponse)
+                .collect(Collectors.toList());
+    }
 
-        Comment parentComment = null;
 
-        Long parentCommentId = commentRequest.getParentId(); //je prend l'ID du comment parent
-        if(parentCommentId  != null) {
-            parentComment = commentRepository.findById(parentCommentId)
-                                             .orElseThrow(() -> new RuntimeException("Parent Comment Not Found"));
+    public CommentResponse createComment(Long postId, @Valid CommentRequest commentRequest, UserPrincipal currentUser) {
+        User user = userRepository.findById(currentUser.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-            if(!parentComment.getPost().getPostId().equals(post.getPostId())){
-                throw new RuntimeException("Parent comment must belong to the same post");
-            }
-        }
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post Not Found"));
 
         Comment comment = new Comment();
-        comment.setPost(post);
-        comment.setAuthor(user);
         comment.setContent(commentRequest.getContent());
-        comment.setParent(parentComment);
-        comment.setCreatedAt(LocalDateTime.now());
+        comment.setPost(post);
+        comment.setUser(user);
 
-        commentRepository.save(comment);
+        if(commentRequest.getParentId() != null) {
+            Comment parent = commentRepository.findById(commentRequest.getParentId())
+                    .orElseThrow(() -> new RuntimeException("Parent Comment Not Found"));
+            comment.setParent(parent);
+        }
 
-        return new CommentResponseDTO(comment);
+        Comment savedComment = commentRepository.save(comment);
 
+        return mapToCommentResponse(savedComment);
     }
 
-    public List<CommentResponseDTO> getAllCommentsByPost(Long postId) {
-        Post post = postRepository.findById(postId)
-                                  .orElseThrow(() -> new RuntimeException("Post with Id " + postId + " Not Found"));
+    @Transactional
+    public CommentResponse updateComment(Long id, @Valid CommentRequest commentRequest, UserPrincipal currentUser) {
+        Comment comment = commentRepository.findById(id)
+                                           .orElseThrow(() -> new RuntimeException("Comment Not Found"));
 
-        // tous les commentaires racines cad ceux avec parentComment = null.. c'est le this.parentId = null dans CommentResponseDTO
-        List<Comment> rootComments = commentRepository.findByPost_PostIdAndParentIsNullOrderByCreatedAt(post.getPostId());
+        if(!comment.getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("No permission to edit this comment");
+        }
 
-        return rootComments.stream()
-                           .map((comment) -> mapToDoWithReplies(comment))
-                           .toList();
+        comment.setContent(commentRequest.getContent());
+        Comment updatedComment = commentRepository.save(comment);
+
+        return mapToCommentResponse(updatedComment);
     }
 
-    public void delete(Long id, String userEmail) {
-        Comment commentToDelete = commentRepository.findById(id)
-                                                   .orElseThrow(() -> new RuntimeException("comment with Id " + id + " not Found"));
 
-        if(!commentToDelete.getAuthor().getEmail().equals(userEmail)) {
+    public void deleteComment(Long id, UserPrincipal currentUser) {
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("comment with Id " + id + " not Found"));
+
+        if(!comment.getUser().getId().equals(currentUser.getId())){
             throw new RuntimeException("Can only delete your own comment");
         }
-        commentRepository.delete(commentToDelete);
+        commentRepository.delete(comment);
     }
+
+
+
+    private CommentResponse mapToCommentResponse(Comment comment) {
+        CommentResponse commentResponse = new CommentResponse();
+
+        commentResponse.setId(comment.getId());
+        commentResponse.setContent(comment.getContent());
+        commentResponse.setUsername(comment.getUser().getUsername());
+        commentResponse.setUserId(comment.getUser().getId());
+        commentResponse.setVoteCount(comment.getVoteCount());
+        commentResponse.setCreatedAt(comment.getCreatedAt());
+        commentResponse.setUpdatedAt(comment.getUpdatedAt());
+
+        if(comment.getParent() != null) {
+            commentResponse.setParentId(comment.getParent().getId());
+        }
+
+        List<CommentResponse> replies = comment.getReplies().stream()
+                                                            .map(this::mapToCommentResponse)
+                                                            .collect(Collectors.toList());
+        commentResponse.setReplies(replies);
+        return commentResponse;
+    }
+
+
+    /*
 
     public List<CommentResponseDTO> getAllCommentsByUser(Long userId) {
         User user = userRepository.findById(userId)
@@ -110,36 +141,6 @@ public class CommentService {
         return replies.stream()
                       .map((com) -> new CommentResponseDTO(com))
                       .toList();
-    }
-
-    @Transactional
-    public CommentResponseDTO updateComment(Long id, String email, CreateCommentDTO comment) throws AccessDeniedException {
-        Comment commentToUpdate = commentRepository.findById(id)
-                                                   .orElseThrow(() -> new EntityNotFoundException("Comment with Id " + id + " Not Found"));
-
-        if(!commentToUpdate.getAuthor().getEmail().equals(email)) {
-            throw new AccessDeniedException("You can only update yur own comment");
-        }
-        commentToUpdate.setContent(comment.getContent());
-
-        return new CommentResponseDTO(commentToUpdate);
-    }
-
-
-    /*-------------------------- Classe privée -----------------------------------------*/
-    private CommentResponseDTO mapToDoWithReplies(Comment comment) {
-        CommentResponseDTO commentPrincipal = new CommentResponseDTO(comment);
-
-        //trouver les réponses directes à un commentaire
-        List<Comment> directReplies = commentRepository.findByParent_CommentIdOrderByCreatedAtAsc(comment.getCommentId());
-
-        List<CommentResponseDTO> repliesDTO = directReplies.stream()
-                                                           .map((com) -> mapToDoWithReplies(com))
-                                                           .toList();
-        commentPrincipal.setReplies(repliesDTO);
-
-        return commentPrincipal;
-    }
-
+    }  */
 
 }

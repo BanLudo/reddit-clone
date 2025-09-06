@@ -2,39 +2,53 @@ package com.redditclone.backend.service;
 
 import com.redditclone.backend.model.User;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 
 public class UserPrincipal implements UserDetails {
 
-    private final long userId;
-    private final String email;
-    private final String password;
-    private final String username;
+    private Long id;
+    private String email;
+    private String password;
+    private Collection<? extends GrantedAuthority> authorities;
+    private Map<String, Object> attributes;
 
-    public static UserPrincipal create(Optional<User> user) {
-
-        return new UserPrincipal(user.get().getUserId(),
-                                 user.get().getEmail(),
-                                 user.get().getPassword(),
-                                 user.get().getUsername());
+    public UserPrincipal(Long id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.authorities = authorities;
     }
 
-    private UserPrincipal(long userId, String email, String password, String username){
-        this.userId = Objects.requireNonNull(userId, "Id cannot be null");
-        this.email = Objects.requireNonNull(email, "Email cannot be null");
-        this.password = Objects.requireNonNull(password, "Password cannot be null");
-        this.username = Objects.requireNonNull(username, "Username cannot be null");
+    public static UserPrincipal createUser(User user) {
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+
+        return new UserPrincipal(user.getId(),
+                                 user.getEmail(),
+                                 user.getPassword(),
+                                 authorities);
+    }
+
+    public static UserPrincipal createUser(User user, Map<String, Object> attributes) {
+        UserPrincipal userPrincipal = createUser(user);
+        userPrincipal.setAttributes(attributes);
+        return userPrincipal;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        return authorities;
     }
 
     @Override
@@ -67,11 +81,11 @@ public class UserPrincipal implements UserDetails {
         return true;
     }
 
-    public long getUserId() {
-        return userId;
+    public Map<String, Object> getAttributes() {
+        return attributes;
     }
 
-    public String getEmail(){
-        return email;
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
     }
 }

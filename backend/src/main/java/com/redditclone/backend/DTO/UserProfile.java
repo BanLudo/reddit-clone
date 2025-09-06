@@ -5,22 +5,12 @@ import com.redditclone.backend.model.User;
 import java.time.LocalDateTime;
 
 
-public class UserDto {
+public class UserProfile {
     private Long id;
-    private String email;
     private String username;
+    private String email;
     private String profilePicture;
     private LocalDateTime createdAt;
-
-    public UserDto() {}
-
-    public UserDto(User user) {
-        this.id = user.getUserId();
-        this.email = user.getEmail();
-        this.username = user.getUsername();
-        this.profilePicture = user.getProfilePicture();
-        this.createdAt = user.getCreatedAt();
-    }
 
     public Long getId() {
         return id;
@@ -30,20 +20,20 @@ public class UserDto {
         this.id = id;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getUsername() {
         return username;
     }
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getProfilePicture() {

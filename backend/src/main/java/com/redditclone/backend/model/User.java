@@ -1,26 +1,38 @@
 package com.redditclone.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints={
+        @UniqueConstraint(columnNames = "username"),
+        @UniqueConstraint(columnNames = "email")
+})
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long id;
 
     @Column(nullable = false)
+    @Size(max = 50)
     private String username;
+
+    @Column(unique = true, nullable = false)
+    @Email
+    @Size(max = 50)
+    private String email;
 
     private String password;
 
-    @Column(unique = true, nullable = false)
-    private String email;
+    private Boolean emailVerified = false;
 
     //@Column(nullable = false) normalement je vais le rendre obligatoire !! mais pour test postman, on le laisse.
     private String profilePicture;
@@ -28,60 +40,77 @@ public class User {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
-    private List<Post> posts;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
-    private List<Comment> comments;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Post> posts = new HashSet<>();
 
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
-    private List<Subreddit> subreddits;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Comment> comments = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Vote> votes = new HashSet<>();
 
     public User() {}
 
-    public User(String email, String username){
+    /*public User(String email, String username){
         this.email = email;
         this.username = username;
-    }
+    }*/
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
+    public User(Long id, String username, String email, String password, Boolean emailVerified, LocalDateTime createdAt, String profilePicture, LocalDateTime updatedAt, Set<Post> posts, Set<Comment> comments, Set<Vote> votes) {
+        this.id = id;
         this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
+        this.email = email;
         this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-
-    public void setProfilePicture(String profilePicture) {
+        this.emailVerified = emailVerified;
+        this.createdAt = createdAt;
         this.profilePicture = profilePicture;
+        this.updatedAt = updatedAt;
+        this.posts = posts;
+        this.comments = comments;
+        this.votes = votes;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Set<Vote> getVotes() {
+        return votes;
+    }
+
+    public void setVotes(Set<Vote> votes) {
+        this.votes = votes;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public Set<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -92,27 +121,43 @@ public class User {
         this.createdAt = createdAt;
     }
 
-    public List<Post> getPosts() {
-        return posts;
+    public String getProfilePicture() {
+        return profilePicture;
     }
 
-    public void setPosts(List<Post> posts) {
-        this.posts = posts;
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
-    public List<Comment> getComments() {
-        return comments;
+    public Boolean getEmailVerified() {
+        return emailVerified;
     }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
+    public void setEmailVerified(Boolean emailVerified) {
+        this.emailVerified = emailVerified;
     }
 
-    public List<Subreddit> getSubreddits() {
-        return subreddits;
+    public String getPassword() {
+        return password;
     }
 
-    public void setSubreddits(List<Subreddit> subreddits) {
-        this.subreddits = subreddits;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public @Email @Size(max = 50) String getEmail() {
+        return email;
+    }
+
+    public void setEmail(@Email @Size(max = 50) String email) {
+        this.email = email;
+    }
+
+    public @Size(max = 50) String getUsername() {
+        return username;
+    }
+
+    public void setUsername(@Size(max = 50) String username) {
+        this.username = username;
     }
 }

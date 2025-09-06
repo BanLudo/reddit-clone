@@ -3,13 +3,13 @@ package com.redditclone.backend.enumeration;
 public enum VoteType {
     UPVOTE(1), DOWNVOTE(-1);
 
-    private final int direction;
+    private final int value;
 
-    VoteType(int direction) {
-        this.direction = direction;
+    VoteType(int value) {
+        this.value = value;
     }
 
-    public int getDirection() {
-        return direction;
+    public int getValue() {
+        return value;
     }
 }

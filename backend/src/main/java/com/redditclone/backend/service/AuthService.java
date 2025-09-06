@@ -1,19 +1,19 @@
 package com.redditclone.backend.service;
 
-import com.redditclone.backend.DTO.AuthDto;
+import com.redditclone.backend.DTO.ApiResponse;
+import com.redditclone.backend.DTO.AuthResponse;
 import com.redditclone.backend.DTO.LoginRequest;
-import com.redditclone.backend.DTO.RegisterRequest;
-import com.redditclone.backend.DTO.UserDto;
+import com.redditclone.backend.DTO.SignUpRequest;
 import com.redditclone.backend.model.User;
 import com.redditclone.backend.repository.UserRepository;
 import com.redditclone.backend.security.JwtTokenProvider;
+import org.apache.coyote.BadRequestException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -32,28 +32,34 @@ public class AuthService {
         this.authenticationManager = authenticationManager;
     }
 
-    @Transactional
-    public AuthDto register(RegisterRequest registerRequest) {
 
-        Optional<User> userOptional = userRepository.findByEmail(registerRequest.getEmail());
+    public ApiResponse register(SignUpRequest signUpRequest) throws BadRequestException {
 
-        if (userOptional.isPresent()) {
-            throw new RuntimeException("Email already in use");
+        Optional<User> userOptionalEmail = userRepository.findByEmail(signUpRequest.getEmail());
+        Optional<User> userOptionalUsername = userRepository.findByUsername(signUpRequest.getUsername());
+
+        if (userOptionalEmail.isPresent()) {
+            throw new BadRequestException("Email "+signUpRequest.getEmail()+" already used.. find another one");
+        }
+
+        if (userOptionalUsername.isPresent()) {
+            throw new BadRequestException("Username "+signUpRequest.getUsername()+" already used.. find another one");
         }
 
         User user = new User();
-        user.setEmail(registerRequest.getEmail());
-        user.setUsername(registerRequest.getUsername());
-        user.setPassword( passwordEncoder.encode(registerRequest.getPassword()));
+        user.setUsername(signUpRequest.getUsername());
+        user.setEmail(signUpRequest.getEmail());
+        user.setPassword( passwordEncoder.encode(signUpRequest.getPassword()));
 
         User savedUser = userRepository.save(user);
 
-        String jwt = jwtTokenProvider.generateToken(savedUser.getEmail());
-
-        return new AuthDto(jwt, new UserDto(savedUser));
+        return new ApiResponse(true, "User registered successfully");
     }
 
-    public AuthDto login(LoginRequest loginRequest) {
+
+
+    public AuthResponse login(LoginRequest loginRequest) {
+
         Authentication loginAttempt = new UsernamePasswordAuthenticationToken(
                                                     loginRequest.getEmail(),
                                                     loginRequest.getPassword());
@@ -61,15 +67,11 @@ public class AuthService {
         Authentication authResult = authenticationManager.authenticate(loginAttempt);
 
         SecurityContextHolder.getContext().setAuthentication(authResult);
-        UserPrincipal userPrincipal = (UserPrincipal) authResult.getPrincipal();
-        String jwt = jwtTokenProvider.generateToken(userPrincipal.getEmail());
 
-        Optional<User> optionalUser = userRepository.findByEmail(userPrincipal.getEmail());
-        if(optionalUser.isEmpty()){
-            throw new RuntimeException("User not found");
-        }
+        String token = jwtTokenProvider.generateToken(authResult);
 
-        return new AuthDto(jwt,new UserDto(optionalUser.get()));
+        return new AuthResponse(token);
+
     }
 
 

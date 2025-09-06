@@ -2,16 +2,15 @@ package com.redditclone.backend.DTO;
 
 
 
-public class AuthDto {
+public class AuthResponse {
     private String token;
     private String tokenType = "Bearer";
-    private UserDto user;
+    private UserProfile user;
 
-    public AuthDto() {}
+    public AuthResponse() {}
 
-    public AuthDto(String token, UserDto user) {
+    public AuthResponse(String token) {
         this.token = token;
-        this.user = user;
     }
 
     public String getToken() {
@@ -30,11 +29,11 @@ public class AuthDto {
         this.tokenType = tokenType;
     }
 
-    public UserDto getUser() {
+    public UserProfile getUser() {
         return user;
     }
 
-    public void setUser(UserDto user) {
+    public void setUser(UserProfile user) {
         this.user = user;
     }
 }

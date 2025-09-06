@@ -21,12 +21,6 @@ public class Vote {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Enumerated(EnumType.STRING)
-    private VoteType voteType;
-
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
@@ -35,9 +29,17 @@ public class Vote {
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
+    @Enumerated(EnumType.STRING)
+    private VoteType voteType;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+
     public Vote() {}
 
-    public Vote(User user, Post post, Comment comment, VoteType voteType, LocalDateTime createdAt) {
+    public Vote(Long id, User user, Post post, Comment comment, VoteType voteType, LocalDateTime createdAt) {
+        this.id = id;
         this.user = user;
         this.post = post;
         this.comment = comment;

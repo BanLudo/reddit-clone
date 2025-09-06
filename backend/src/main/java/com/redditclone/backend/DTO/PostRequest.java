@@ -1,49 +1,25 @@
 package com.redditclone.backend.DTO;
 
-import com.redditclone.backend.model.Post;
 import jakarta.validation.constraints.NotBlank;
-
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.Size;
 
 public class PostRequest {
-    private long postId;
+
+    /*private long postId;*/
 
     @NotBlank(message = "Title is required")
+    @Size(max = 300)
     private String title;
 
     private String content;
     private String imageUrl;
-    private String author;
-    private LocalDateTime createdAt;
-    private Integer commentCount;
-    private int voteCount;
 
 
-    public PostRequest() {}
-
-    public PostRequest(Post post){
-        this.postId = post.getPostId();
-        this.title = post.getTitle();
-        this.content = post.getContent();
-        this.imageUrl = post.getImageUrl();
-        this.author = post.getAuthor().getUsername();
-        this.createdAt = post.getCreatedAt();
-        this.voteCount = post.getVoteCount();
-    }
-
-    public long getPostId() {
-        return postId;
-    }
-
-    public void setPostId(long postId) {
-        this.postId = postId;
-    }
-
-    public @NotBlank(message = "Title is required") String getTitle() {
+    public @NotBlank(message = "Title is required") @Size(max = 300) String getTitle() {
         return title;
     }
 
-    public void setTitle(@NotBlank(message = "Title is required") String title) {
+    public void setTitle(@NotBlank(message = "Title is required") @Size(max = 300) String title) {
         this.title = title;
     }
 
@@ -61,37 +37,5 @@ public class PostRequest {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Integer getCommentCount() {
-        return commentCount;
-    }
-
-    public void setCommentCount(Integer commentCount) {
-        this.commentCount = commentCount;
-    }
-
-    public int getVoteCount() {
-        return voteCount;
-    }
-
-    public void setVoteCount(int voteCount) {
-        this.voteCount = voteCount;
     }
 }

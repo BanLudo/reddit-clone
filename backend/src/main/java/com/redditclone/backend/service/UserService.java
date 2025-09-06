@@ -1,9 +1,8 @@
 package com.redditclone.backend.service;
 
-import com.redditclone.backend.DTO.UserDto;
+import com.redditclone.backend.DTO.UserProfile;
 import com.redditclone.backend.model.User;
 import com.redditclone.backend.repository.UserRepository;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,6 +20,36 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    public UserProfile getCurrentUser(UserPrincipal currentUser) {
+        return getUserProfile(currentUser.getId());
+    }
+
+    public UserProfile getUserProfile(Long id) {
+        User user = userRepository.findById(id)
+                                  .orElseThrow(()-> new RuntimeException("User avec l'id "+id+" not found"));
+
+        UserProfile userProfile = new UserProfile();
+        userProfile.setId(user.getId());
+        userProfile.setUsername(user.getUsername());
+        userProfile.setEmail(user.getEmail());
+        userProfile.setProfilePicture(user.getProfilePicture());
+        userProfile.setCreatedAt(user.getCreatedAt());
+
+        return userProfile;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
     @Transactional(readOnly = true)
     public UserDto getCurrentUser() {
 
@@ -57,5 +86,5 @@ public class UserService {
                 .orElseThrow(()-> new UsernameNotFoundException("Username " + username + " not found"));
 
         return new UserDto(user);
-    }
+    }*/
 }

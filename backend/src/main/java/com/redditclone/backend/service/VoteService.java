@@ -1,6 +1,6 @@
 package com.redditclone.backend.service;
 
-import com.redditclone.backend.DTO.vote.VoteDto;
+import com.redditclone.backend.DTO.vote.VoteRequest;
 import com.redditclone.backend.enumeration.VoteType;
 import com.redditclone.backend.model.Comment;
 import com.redditclone.backend.model.Post;
@@ -13,7 +13,6 @@ import com.redditclone.backend.repository.VoteRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -32,7 +31,84 @@ public class VoteService {
         this.voteRepository = voteRepository;
     }
 
+    @Transactional
+    public void votePost(Long postId, VoteRequest voteRequest, UserPrincipal currentUser) {
+        Post post = postRepository.findById(postId)
+                                  .orElseThrow(()-> new RuntimeException("Post not found"));
+        User user = userRepository.findById(currentUser.getId())
+                                  .orElseThrow(()-> new RuntimeException("User not found"));
 
+        Optional<Vote> existingVote = voteRepository.findByPost_IdAndUser_Id(postId, currentUser.getId());
+
+        if (existingVote.isPresent()) {
+            Vote vote = existingVote.get();
+            if(vote.getVoteType() == voteRequest.getVoteType()){
+                voteRepository.delete(vote);
+                updatePostVoteCount(post);
+            }else {
+                vote.setVoteType(voteRequest.getVoteType());
+                voteRepository.save(vote);
+                updatePostVoteCount(post);
+            }
+        }else {
+            Vote vote = new Vote();
+            vote.setPost(post);
+            vote.setUser(user);
+            vote.setVoteType(voteRequest.getVoteType());
+            voteRepository.save(vote);
+            updatePostVoteCount(post);
+        }
+    }
+
+    @Transactional
+    public void voteComment(Long commentId, VoteRequest voteRequest, UserPrincipal currentUser) {
+        Comment comment = commentRepository.findById(commentId)
+                                           .orElseThrow(()-> new RuntimeException("Comment not found"));
+        User user = userRepository.findById(currentUser.getId())
+                .orElseThrow(()-> new RuntimeException("User not found"));
+
+        Optional<Vote> existingVote = voteRepository.findByComment_IdAndUser_Id(commentId, currentUser.getId());
+
+        if (existingVote.isPresent()) {
+            Vote vote = existingVote.get();
+            if(vote.getVoteType() == voteRequest.getVoteType()){
+                voteRepository.delete(vote);
+                updateCommentVoteCount(comment);
+            }else {
+                vote.setVoteType(voteRequest.getVoteType());
+                voteRepository.save(vote);
+                updateCommentVoteCount(comment);
+            }
+        }else {
+            Vote vote = new Vote();
+            vote.setComment(comment);
+            vote.setUser(user);
+            vote.setVoteType(voteRequest.getVoteType());
+            voteRepository.save(vote);
+            updateCommentVoteCount(comment);
+        }
+    }
+
+
+    private void updatePostVoteCount(Post post) {
+        Long upvotes = voteRepository.countByPostIdAndVoteType(post.getId(), VoteType.UPVOTE);
+        Long downvotes = voteRepository.countByPostIdAndVoteType(post.getId(), VoteType.DOWNVOTE);
+        post.setVoteCount(Math.toIntExact(upvotes + downvotes));
+        postRepository.save(post);
+    }
+
+
+    private void updateCommentVoteCount(Comment comment) {
+        Long upvotes = voteRepository.countByPostIdAndVoteType(comment.getId(), VoteType.UPVOTE);
+        Long downvotes = voteRepository.countByPostIdAndVoteType(comment.getId(), VoteType.DOWNVOTE);
+        comment.setVoteCount(Math.toIntExact(upvotes + downvotes));
+        commentRepository.save(comment);
+    }
+
+
+
+
+/*
     @Transactional
     public void vote(VoteDto voteDto, String userEmail) {
         User user = userRepository.findByEmail(userEmail)
@@ -120,6 +196,6 @@ public class VoteService {
             comment.setVoteCount(voteRepository.getCommentScore(comment));
             commentRepository.save(comment);
         }
-    }
+    } */
 
 } // fin de service

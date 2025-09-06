@@ -1,10 +1,12 @@
 package com.redditclone.backend.controller;
 
-import com.redditclone.backend.DTO.AuthDto;
+import com.redditclone.backend.DTO.ApiResponse;
+import com.redditclone.backend.DTO.AuthResponse;
 import com.redditclone.backend.DTO.LoginRequest;
-import com.redditclone.backend.DTO.RegisterRequest;
+import com.redditclone.backend.DTO.SignUpRequest;
 import com.redditclone.backend.service.AuthService;
 import jakarta.validation.Valid;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,15 +23,15 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthDto> register(@Valid @RequestBody RegisterRequest registerRequest){
-        AuthDto response = authService.register(registerRequest);
+    @PostMapping("/signup")
+    public ResponseEntity<?> register(@Valid @RequestBody SignUpRequest signUpRequest) throws BadRequestException {
+        ApiResponse response = authService.register(signUpRequest);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthDto> login(@Valid @RequestBody LoginRequest loginRequest){
-        AuthDto response = authService.login(loginRequest);
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest){
+        AuthResponse response = authService.login(loginRequest);
         return ResponseEntity.ok(response);
     }
 }

@@ -1,19 +1,20 @@
 package com.redditclone.backend.controller;
 
-import com.redditclone.backend.DTO.comment.CommentResponseDTO;
-import com.redditclone.backend.DTO.comment.CreateCommentDTO;
+import com.redditclone.backend.DTO.comment.CommentRequest;
+import com.redditclone.backend.DTO.comment.CommentResponse;
 import com.redditclone.backend.service.CommentService;
+import com.redditclone.backend.service.UserPrincipal;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/comments")
+@RequestMapping("/api")
 public class CommentController {
 
     private final CommentService commentService;
@@ -22,26 +23,36 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @PostMapping
-    public ResponseEntity<CommentResponseDTO> createComment(@Valid @RequestBody CreateCommentDTO request, Authentication authentication) {
-        String userEmail = authentication.getName();
-        CommentResponseDTO createdComment = commentService.createComment(userEmail, request);
 
+    @GetMapping("/posts/{postId}/comments")
+    public List<CommentResponse> getAllCommentsByPostId(@PathVariable Long postId){
+        return commentService.getAllCommentsByPostId(postId);
+    }
+
+    @PostMapping("/posts/{postId}/comments")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<CommentResponse> createComment(@PathVariable Long postId, @Valid @RequestBody CommentRequest commentRequest, @AuthenticationPrincipal UserPrincipal currentUser) {
+        CommentResponse createdComment = commentService.createComment(postId, commentRequest, currentUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdComment);
     }
 
-    @GetMapping("/post/{postId}")
-    public ResponseEntity<List<CommentResponseDTO>> getAllCommentsByPost(@PathVariable Long postId){
-        List<CommentResponseDTO> comments = commentService.getAllCommentsByPost(postId);
-        return ResponseEntity.ok(comments);
+    @PutMapping("/comments/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<CommentResponse> updateComment(@PathVariable Long id, @Valid @RequestBody CommentRequest commentRequest, @AuthenticationPrincipal UserPrincipal currentUser){
+        CommentResponse commentUpdated = commentService.updateComment(id, commentRequest, currentUser);
+        return ResponseEntity.ok(commentUpdated);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCommentById(@PathVariable Long id, Authentication authentication) {
-        String userEmail = authentication.getName();
-        commentService.delete(id, userEmail);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/comments/{id}")
+    public ResponseEntity<Void> deleteCommentById(@PathVariable Long id, @AuthenticationPrincipal UserPrincipal currentUser) {
+        commentService.deleteComment(id, currentUser);
+        return ResponseEntity.ok().build();
     }
+
+
+
+
+    /*
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<CommentResponseDTO>> getAllCommentsByUser(@PathVariable Long userId) {
@@ -61,7 +72,7 @@ public class CommentController {
         String userEmail = authentication.getName();
         CommentResponseDTO commentUpdated = commentService.updateComment(id, userEmail, updateRequest);
         return ResponseEntity.ok(commentUpdated);
-    }
+    } */
 
 
 
