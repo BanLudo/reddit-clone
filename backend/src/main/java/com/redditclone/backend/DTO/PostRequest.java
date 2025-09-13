@@ -5,8 +5,6 @@ import jakarta.validation.constraints.Size;
 
 public class PostRequest {
 
-    /*private long postId;*/
-
     @NotBlank(message = "Title is required")
     @Size(max = 300)
     private String title;

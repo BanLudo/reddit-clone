@@ -3,13 +3,13 @@ package com.redditclone.backend.DTO;
 public class AuthResponse {
     private String token;
     private String tokenType = "Bearer";
-    private String username;
+    private UserProfile user;
 
     public AuthResponse() {}
 
-    public AuthResponse(String token, String username) {
+    public AuthResponse(String token, UserProfile user) {
         this.token = token;
-        this.username = username;
+        this.user = user;
     }
 
     public String getToken() {
@@ -28,11 +28,11 @@ public class AuthResponse {
         this.tokenType = tokenType;
     }
 
-    public String getUsername() {
-        return username;
+    public UserProfile getUser() {
+        return user;
     }
 
-    public void setUserTestName(String username) {
-        this.username = username;
+    public void setUser(UserProfile user) {
+        this.user = user;
     }
 }

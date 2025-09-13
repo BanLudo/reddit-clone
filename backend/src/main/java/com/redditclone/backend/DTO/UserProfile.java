@@ -9,6 +9,16 @@ public class UserProfile {
     private String profilePicture;
     private LocalDateTime createdAt;
 
+    public UserProfile() {}
+
+    public UserProfile(Long id, String username, String email, String profilePicture, LocalDateTime createdAt) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.profilePicture = profilePicture;
+        this.createdAt = createdAt;
+    }
+
     public Long getId() {
         return id;
     }

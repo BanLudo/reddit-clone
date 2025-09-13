@@ -1,13 +1,22 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject } from "@angular/core";
+import { RouterLink, RouterOutlet } from "@angular/router";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { CommonModule } from "@angular/common";
+import { AuthServiceService } from "./services/AuthService/auth-service.service";
+import { MatIconModule } from "@angular/material/icon";
+import { MatMenuModule } from "@angular/material/menu";
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+	selector: "app-root",
+	standalone: true,
+	imports: [RouterOutlet, MatToolbarModule, CommonModule, MatIconModule, MatMenuModule, RouterLink],
+	templateUrl: "./app.component.html",
+	styleUrl: "./app.component.scss",
 })
 export class AppComponent {
-  title = 'frontend';
+	authService = inject(AuthServiceService);
+
+	logout() {
+		this.authService.logout();
+	}
 }

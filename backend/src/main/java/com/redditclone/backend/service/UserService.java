@@ -3,13 +3,7 @@ package com.redditclone.backend.service;
 import com.redditclone.backend.DTO.UserProfile;
 import com.redditclone.backend.model.User;
 import com.redditclone.backend.repository.UserRepository;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 public class UserService {

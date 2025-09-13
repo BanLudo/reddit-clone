@@ -1,3 +1,17 @@
-import { Routes } from '@angular/router';
+import { Routes } from "@angular/router";
 
-export const routes: Routes = [];
+export const routes: Routes = [
+	{
+		path: "auth/login",
+	},
+	{
+		path: "auth/signup",
+	},
+	{
+		path: "profile",
+	},
+	{
+		path: "*",
+		redirectTo: "",
+	},
+];

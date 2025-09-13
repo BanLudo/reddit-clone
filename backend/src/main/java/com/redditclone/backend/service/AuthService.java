@@ -1,9 +1,6 @@
 package com.redditclone.backend.service;
 
-import com.redditclone.backend.DTO.ApiResponse;
-import com.redditclone.backend.DTO.AuthResponse;
-import com.redditclone.backend.DTO.LoginRequest;
-import com.redditclone.backend.DTO.SignUpRequest;
+import com.redditclone.backend.DTO.*;
 import com.redditclone.backend.model.User;
 import com.redditclone.backend.repository.UserRepository;
 import com.redditclone.backend.security.JwtTokenProvider;
@@ -73,8 +70,12 @@ public class AuthService {
         Long userId = jwtTokenProvider.getUserIdFromJwt(token);
         User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("no user ??"));
 
-        return new AuthResponse(token, user.getUsername());
+        return new AuthResponse(token, convertToUserProfile(user));
 
+    }
+
+    private UserProfile convertToUserProfile(User user){
+        return new UserProfile(user.getId(), user.getUsername(), user.getEmail(), user.getProfilePicture(), user.getCreatedAt());
     }
 
 
