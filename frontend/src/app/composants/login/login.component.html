@@ -1,0 +1,51 @@
+<div class="auth-container">
+	<mat-card class="auth-card">
+		<mat-card-header>
+			<mat-card-title>Login</mat-card-title>
+		</mat-card-header>
+
+		<mat-card-content>
+			<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+				<mat-form-field appearance="outline" class="full-width">
+					<mat-label>Username</mat-label>
+					<input matInput formControlName="username" required />
+					@if(loginForm.get('username')?.touched){
+					<mat-error>Username is required</mat-error>
+					}
+				</mat-form-field>
+				<mat-form-field appearance="outline" class="full-width">
+					<mat-label>Password</mat-label>
+					<input matInput formControlName="password" required />
+					@if(loginForm.get('password')?.hasError('required') &&
+					loginForm.get('password')?.touched){
+					<mat-error>Password is required</mat-error>
+					}
+				</mat-form-field>
+
+				<button
+					mat-raised-button
+					color="primary"
+					type="submit"
+					class="full-width submit-btn"
+					[disabled]="loginForm.invalid || authService.isLoading()">
+					@if(authService.isLoading()){
+					<mat-spinner diametre="20"></mat-spinner>
+					}@else { Login }
+				</button>
+			</form>
+
+			<div class="oauth-section">
+				<!-- à faire plus tard.. à la fin du dev-->
+				<p>Or continue with :</p>
+				<a href="" mat-raised-button color="accent" class="full-width">Login with Google</a>
+			</div>
+
+			<div class="signup-link">
+				<p>
+					Don't have an account ?
+					<a routerLink="/auth/signup">Sign up</a>
+				</p>
+			</div>
+		</mat-card-content>
+	</mat-card>
+</div>

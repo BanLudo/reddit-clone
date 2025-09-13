@@ -31,5 +31,7 @@ need to first add a package that implements end-to-end testing capabilities.
 To get more help on the Angular CLI use `ng help` or go check out the
 [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
 
-A Faire ==> Login html / component, Sign Up html / component, Route pour LoginComponent, Route
-SignUp, PostService, CommentService ?
+A Faire ==> Login html / component [FAIT + non testé], Sign Up html / component[FAIT + non testé]
+
+- PostService, [A FAIRE]
+- page d'acceuil avec tous les posts crées [A FAIRE]
