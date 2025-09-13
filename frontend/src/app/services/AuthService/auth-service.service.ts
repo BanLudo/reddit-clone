@@ -1,9 +1,9 @@
-import { HttpClient } from "@angular/common/http";
 import { computed, inject, Injectable, signal } from "@angular/core";
 import { User } from "../../models/user.model";
 import { ApiResponse, AuthRequest, AuthResponse, RegisterRequest } from "../../models/auth.model";
 import { catchError, Observable, tap } from "rxjs";
 import { Router } from "@angular/router";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable({
 	providedIn: "root",

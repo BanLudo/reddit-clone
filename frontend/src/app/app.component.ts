@@ -5,11 +5,20 @@ import { CommonModule } from "@angular/common";
 import { AuthServiceService } from "./services/AuthService/auth-service.service";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
 	selector: "app-root",
 	standalone: true,
-	imports: [RouterOutlet, MatToolbarModule, CommonModule, MatIconModule, MatMenuModule, RouterLink],
+	imports: [
+		RouterOutlet,
+		MatToolbarModule,
+		CommonModule,
+		MatIconModule,
+		MatMenuModule,
+		RouterLink,
+		MatButtonModule,
+	],
 	templateUrl: "./app.component.html",
 	styleUrl: "./app.component.scss",
 })
