@@ -1,0 +1,73 @@
+<div class="create-post-container">
+	<mat-card class="create-post-card">
+		<mat-card-header>
+			<mat-card-title>Créer un nouveau post</mat-card-title>
+		</mat-card-header>
+
+		<mat-card-content>
+			<form [formGroup]="postForm" (ngSubmit)="onSubmit()">
+				<mat-form-field appearance="outline" class="full-width">
+					<mat-label>Titre</mat-label>
+					<input matInput formControlName="title" maxlength="300" required />
+					@if(postForm.get('title')?.hasError('required') && postForm.get('title')?.touched ){
+					<mat-error>Le titre est requis</mat-error>
+					} @if(postForm.get('title')?.hasError('maxlength')){
+					<mat-error>Le titre ne doit pas depasser 300 caractères</mat-error>
+					}
+					<mat-hint>{{ postForm.get("title")?.value?.length || 0 }}/300</mat-hint>
+				</mat-form-field>
+
+				<mat-form-field appearance="outline" class="full-width">
+					<mat-label>Contenu (optionnel)</mat-label>
+					<textarea
+						matInput
+						formControlName="content"
+						rows="6"
+						placeholder="Ecrire votre post..."></textarea>
+				</mat-form-field>
+
+				<div class="image-upload-section">
+					<input
+						type="file"
+						#fileInput
+						(change)="onFileSelected($event)"
+						accept="image/*"
+						style="display: none" />
+
+					<button
+						mat-button
+						type="button"
+						(click)="fileInput.click()"
+						[disabled]="uploadingImageSignal()">
+						<mat-icon>image</mat-icon>
+						@if(uploadingImageSignal()){ Téléchargement... }@else { Ajouter une image }
+					</button>
+
+					@if(uploadingImageSignal()){
+					<mat-spinner diameter="20"></mat-spinner>
+					} @if(selectedImageUrlSignal()){
+					<div class="image-preview">
+						<img [src]="selectedImageUrlSignal()" alt="preview" />
+						<button mat-icon-button (click)="removeImage()">
+							<mat-icon>close</mat-icon>
+						</button>
+					</div>
+					}
+				</div>
+
+				<div class="form-actions">
+					<button mat-button routerLink="/" type="button">Annuler</button>
+					<button
+						mat-raised-button
+						color="primary"
+						type="submit"
+						[disabled]="postForm.invalid || loadingSignal()">
+						@if(loadingSignal()){
+						<mat-spinner diameter="16"></mat-spinner>
+						}@else{ Publier }
+					</button>
+				</div>
+			</form>
+		</mat-card-content>
+	</mat-card>
+</div>

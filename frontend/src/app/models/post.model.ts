@@ -6,11 +6,15 @@ export interface Post {
 	title: string;
 	content?: string;
 	imageUrl?: string;
-	user: User;
+	username: string;
+	userId: number;
 	voteCount: number;
+	commentCount: number;
 	createdAt: Date;
 	updatedAt: Date;
-	comments: Comment[];
+
+	/*user: User;*/
+	/*comments: Comment[]; autre methode */
 }
 
 export interface PostRequest {
@@ -25,6 +29,6 @@ export interface PostPage {
 	totalPages: number;
 	size: number;
 	number: number;
-	first: boolean;
-	last: boolean;
+	/*first: boolean;
+	last: boolean; autre methode */
 }

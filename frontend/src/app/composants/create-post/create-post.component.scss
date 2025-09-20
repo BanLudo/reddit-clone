@@ -1,0 +1,60 @@
+.create-post-container {
+	max-width: 800px;
+	margin: 0 auto;
+	padding: 20px;
+}
+
+.create-post-card {
+	width: 100%;
+}
+
+.full-width {
+	width: 100%;
+	margin-bottom: 16px;
+}
+
+.image-upload-section {
+	margin-bottom: 20px;
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+.image-preview {
+	position: relative;
+	display: inline-block;
+	margin-top: 16px;
+}
+
+.image-preview img {
+	max-width: 300px;
+	max-height: 200px;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.image-preview button {
+	position: absolute;
+	top: -8px;
+	right: -8px;
+	background-color: #f44336;
+	color: white;
+}
+
+.form-actions {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 20px;
+}
+
+mat-spinner {
+	margin-left: 8px;
+}
+
+@media (max-width: 768px) {
+	.form-actions {
+		flex-direction: column;
+		gap: 12px;
+	}
+}

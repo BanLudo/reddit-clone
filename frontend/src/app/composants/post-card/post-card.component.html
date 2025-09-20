@@ -1,0 +1,76 @@
+<mat-card class="post-card">
+	@if(canDo){
+	<div class="vote-section">
+		<button
+			mat-icon-button
+			class="vote-button upvote"
+			[class.active]="userVote() === 'UPVOTE'"
+			(click)="onVote(VoteType.UPVOTE)">
+			<mat-icon>keyboard_arrow_up</mat-icon>
+		</button>
+
+		<span
+			class="vote-count"
+			[class.positive]="post.voteCount > 0"
+			[class.negative]="post.voteCount < 0">
+			{{ post.voteCount }}
+		</span>
+
+		<button
+			mat-icon-button
+			class="vote-button downvote"
+			[class.active]="userVote() === 'DOWNVOTE'"
+			(click)="onVote(VoteType.DOWNVOTE)">
+			<mat-icon>keyboard_arrow_down</mat-icon>
+		</button>
+	</div>
+	}
+
+	<div class="post-content">
+		<div class="post-header">
+			<div class="post-meta">
+				<span class="username">{{ post.username }}</span>
+				<span class="separator">.</span>
+				<span class="timestamp">{{ getRealTime(post.createdAt) }}</span>
+			</div>
+
+			@if(canDo){
+			<button mat-icon-button [matMenuTriggerFor]="menu">
+				<mat-icon>more_vert</mat-icon>
+			</button>
+			<mat-menu #menu="matMenu">
+				<button mat-menu-item (click)="onEdit()">
+					<mat-icon>edit</mat-icon>
+					<span>Modifier</span>
+				</button>
+				<button mat-menu-item (click)="onDelete()">
+					<mat-icon>delete</mat-icon>
+					<span>Supprimer</span>
+				</button>
+			</mat-menu>
+			}
+		</div>
+
+		<h2 class="post-title" [routerLink]="['/post', post.id]">{{ post.title }}</h2>
+
+		@if(post.content){
+		<div class="post-description" [innerHTML]="trunctateContent()"></div>
+		} @if(post.imageUrl){
+		<div class="post-image">
+			<img src="post.imageUrl" alt="post.title" (click)="onImageClick()" />
+		</div>
+		}
+
+		<div class="post-actions">
+			<button mat-button class="action-button" [routerLink]="['/post', post.id]">
+				<mat-icon>comment</mat-icon>
+				<span>{{ post.commentCount }} commentaires</span>
+			</button>
+
+			<button mat-button class="action-button" (click)="onShare()">
+				<mat-icon>share</mat-icon>
+				<span>Partager</span>
+			</button>
+		</div>
+	</div>
+</mat-card>

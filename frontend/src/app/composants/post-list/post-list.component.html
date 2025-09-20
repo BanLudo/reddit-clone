@@ -1,0 +1,51 @@
+<div class="post-list-container">
+	<div class="header">
+		<h1>Posts populaires</h1>
+
+		<div class="controls">
+			<mat-form-field appearance="outline">
+				<mat-label>Trier par</mat-label>
+				<mat-select [value]="sortBy()" (selectionChange)="onSortChange($event.value)">
+					<mat-option value="new">Plus recents</mat-option>
+					<mat-option value="popular">Plus populaires</mat-option>
+				</mat-select>
+			</mat-form-field>
+
+			@if(authService.isAuthenticated()){
+			<button mat-raised-button color="primary" routerLink="/create-post">
+				<mat-icon>add</mat-icon>
+				Créer un post
+			</button>
+			}
+		</div>
+	</div>
+
+	@if(postService.isLoading()){
+	<div class="loading-container">
+		<mat-spinner></mat-spinner>
+	</div>
+	}
+
+	<div class="posts-container">
+		@for (post of postService.allPosts(); track post.id) {
+		<app-post-card
+			[post]="post"
+			[canDo]="authService.isLoggedIn()"
+			(vote)="onVote($event.postId, $event.voteType)"></app-post-card>
+		}
+	</div>
+
+	@if(hasMorePosts()){
+	<div class="load-more">
+		<button
+			mat-button
+			color="primary"
+			(click)="loadMorePosts()"
+			[disabled]="postService.isLoading()">
+			@if(postService.isLoading()){
+			<mat-spinner diameter="20"></mat-spinner>
+			}@else{ Charger plus }
+		</button>
+	</div>
+	}
+</div>

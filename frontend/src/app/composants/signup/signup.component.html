@@ -46,8 +46,8 @@
 					color="primary"
 					mat-raised-button
 					class="full-width submit-btn"
-					[disabled]="signupForm.invalid || authService.isLoading()">
-					@if(authService.isLoading()){
+					[disabled]="signupForm.invalid || loading()">
+					@if(loading()){
 					<mat-spinner diameter="20"></mat-spinner>
 					}@else{ Sign Up }
 				</button>
@@ -61,7 +61,7 @@
 			<div class="login-link">
 				<p>
 					Already have an account ?
-					<a routerLink="/auth/login">Login</a>
+					<a routerLink="/login">Login</a>
 				</p>
 			</div>
 		</mat-card-content>
