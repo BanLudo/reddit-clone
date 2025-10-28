@@ -1,0 +1,130 @@
+<div class="comment-item" [style.margin-left.px]="level * 20">
+	<mat-card class="comment-card">
+		<mat-card-content>
+			<div class="comment-header">
+				<div class="comment-meta">
+					<span class="username">u/{{ comment.username }}</span>
+					<span class="separator">.</span>
+					<span class="timestamp">{{ getRelativeTime(comment.createdAt) }}</span>
+					@if(comment.updatedAt && comment.updatedAt !== comment.createdAt){
+					<span class="separator">.</span>
+					<span class="edited-indicator">(modifié)</span>
+					} @if(comment.voteCount !== 0){
+					<span class="separator">.</span>
+					<span
+						class="vote-score"
+						[class.positive]="comment.voteCount > 0"
+						[class.negative]="comment.voteCount < 0">
+						{{ comment.voteCount }}
+					</span>
+					}
+				</div>
+
+				@if(canDo && authService.isLoggedIn() && canEditComment()){
+				<button mat-icon-button [matMenuTriggerFor]="menu">
+					<mat-icon>more_vert</mat-icon>
+				</button>
+				<mat-menu #menu="matMenu">
+					<button mat-menu-item (click)="onEdit()">
+						<mat-icon>edit</mat-icon>
+						<span>Modifier</span>
+					</button>
+					<button mat-menu-item (click)="onDelete()">
+						<mat-icon>delete</mat-icon>
+						<span>Supprimer</span>
+					</button>
+				</mat-menu>
+				}
+			</div>
+
+			<!-- normal : affiche commentaire -->
+			@if(!isEditing()){
+			<div class="comment-content">
+				{{ comment.content }}
+			</div>
+			}
+			<!-- edition -->
+			@if(isEditing()){
+			<div class="edit-form">
+				<form [formGroup]="editForm" (ngSubmit)="onSaveEdit()">
+					<mat-form-field appearance="outline" class="full-width">
+						<mat-label>Modifier le commentaire</mat-label>
+						<textarea
+							matInput
+							formControlName="content"
+							rows="3"
+							[placeholder]="comment.content"></textarea>
+						@if(editForm.get('content')?.hasError('required') && editForm.get('content')?.touched ){
+						<mat-error>Le contenu est requis</mat-error>
+						}
+					</mat-form-field>
+
+					<div class="edit-actions">
+						<button mat-button type="button" (click)="onCancelEdit()">Annuler</button>
+
+						<button
+							mat-raised-button
+							color="primary"
+							type="submit"
+							[disabled]="editForm.invalid || editLoading()">
+							@if(editLoading()){
+							<mat-spinner diameter="16"></mat-spinner>
+							}@else { Sauvegarder }
+						</button>
+					</div>
+				</form>
+			</div>
+			}
+
+			<!-- Actions du commentaire (votes, répondre) -->
+			@if (!isEditing()) {
+			<div class="comment-actions">
+				@if(canDo && authService.isLoggedIn()){
+				<button
+					mat-icon-button
+					class="vote-button upvote"
+					[class.active]="userVote() === 'UPVOTE'"
+					(click)="onVote(VoteType.UPVOTE)">
+					<mat-icon>keyboard_arrow_up</mat-icon>
+				</button>
+
+				<button
+					mat-icon-button
+					class="vote-button upvote"
+					[class.active]="userVote() === 'DOWNVOTE'"
+					(click)="onVote(VoteType.DOWNVOTE)">
+					<mat-icon>keyboard_arrow_down</mat-icon>
+				</button>
+
+				<button mat-button class="reply-button" (click)="toggleReply()">
+					<mat-icon>reply</mat-icon>
+					Répondre
+				</button>
+				}
+			</div>
+
+			@if(showReply()){
+			<div class="reply-form">
+				<app-comment-form
+					[postId]="postId"
+					[parentId]="comment.id"
+					(commentAdded)="onReplyAdded($event)"
+					(cancelledComment)="toggleReply()"></app-comment-form>
+			</div>
+			} }
+		</mat-card-content>
+	</mat-card>
+
+	<!-- Nested replies -->
+	@if(comment.replies && comment.replies.length > 0){
+	<div class="replies">
+		@for (reply of comment.replies; track reply.id) {
+		<app-comment-item
+			[comment]="reply"
+			[postId]="postId"
+			[canDo]="canDo"
+			[level]="level + 1"></app-comment-item>
+		}
+	</div>
+	}
+</div>

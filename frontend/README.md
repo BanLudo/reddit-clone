@@ -33,5 +33,5 @@ To get more help on the Angular CLI use `ng help` or go check out the
 
 A Faire ==> Login html / component [FAIT + non testé], Sign Up html / component[FAIT + non testé]
 
-- PostService, [A FAIRE]
-- page d'acceuil avec tous les posts crées [A FAIRE]
+- ProfileComponent à créer et faire [A FAIRE]
+- Create les authGuard [A FAIRE]

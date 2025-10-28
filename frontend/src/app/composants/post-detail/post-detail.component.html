@@ -1,0 +1,96 @@
+<div class="post-detail-container">
+	@if(loading()){
+	<div class="loading-container">
+		<mat-spinner></mat-spinner>
+	</div>
+	}@else if(post()){
+	<mat-card class="post-card">
+		<div class="vote-section">
+			@if(authService.isLoggedIn()){
+			<button
+				mat-icon-button
+				class="vote-button upvote"
+				[class.active]="userVote() === 'UPVOTE'"
+				(click)="onVote(VoteType.UPVOTE)">
+				<mat-icon>keyboard_arrow_up</mat-icon>
+			</button>
+			}
+
+			<span
+				class="vote-count"
+				[class.positive]="post()!.voteCount > 0"
+				[class.negative]="post()!.voteCount < 0">
+				{{ post()!.voteCount }}
+			</span>
+
+			@if(authService.isLoggedIn()){
+			<button
+				mat-icon-button
+				class="vote-button downvote"
+				[class.active]="userVote() === 'DOWNVOTE'"
+				(click)="onVote(VoteType.DOWNVOTE)">
+				<mat-icon>keyboard_arrow_down</mat-icon>
+			</button>
+			}
+		</div>
+
+		<div class="post-content">
+			<div class="post-header">
+				<div class="post-meta">
+					<span class="username">u/{{ post()!.username }}</span>
+					<span class="separator">.</span>
+					<span class="timestamp">u/{{ getRelativeTime(post()!.createdAt) }}</span>
+				</div>
+
+				<button mat-button routerLink="/" color="primary">
+					<mat-icon>arrow_back</mat-icon>
+					Retour
+				</button>
+			</div>
+
+			<h1 class="post-title">{{ post()!.title }}</h1>
+
+			@if(post()!.content){
+			<div class="post-description" [innerHTML]="post()!.content"></div>
+			} @if(post()!.imageUrl){
+			<div class="post-image">
+				<img src="post()!.imageUrl" alt="post()!.title" />
+			</div>
+			}
+
+			<div class="post-stats">
+				<span>{{ post()!.commentCount }} commentaires</span>
+			</div>
+		</div>
+	</mat-card>
+
+	<mat-divider></mat-divider>
+
+	@if(authService.isLoggedIn()){
+	<div class="comment-form-section">
+		<app-comment-form
+			[postId]="postId()"
+			(commentAdded)="onCommentAdded($event)"></app-comment-form>
+	</div>
+	}@else {
+	<div class="login-prompt">
+		<p>
+			<a routerLink="/login">Connectez-vous</a>
+			pour commenter
+		</p>
+	</div>
+	}
+
+	<div class="comments-section">
+		<app-comment-list
+			[postId]="postId()"
+			[comments]="comments()"
+			[canDo]="authService.isLoggedIn()"></app-comment-list>
+	</div>
+	}@else {
+	<div class="error-message">
+		<h2>Post non trouvé</h2>
+		<button mat-raised-button routerLink="/" color="primary">Retour à l'accueil</button>
+	</div>
+	}
+</div>

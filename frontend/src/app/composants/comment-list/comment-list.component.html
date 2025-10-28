@@ -1,0 +1,13 @@
+<div class="comments-list">
+	@if(comments.length === 0){
+	<div class="no-comments">
+		<p>Aucun commentaire pour le moment. Soyez le premier à commenter !</p>
+	</div>
+	}@else { @for (comment of comments; track comment.id) {
+	<app-comment-item
+		[comment]="comment"
+		[postId]="postId"
+		[canDo]="canDo"
+		[level]="0"></app-comment-item>
+	} }
+</div>

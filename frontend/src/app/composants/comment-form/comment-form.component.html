@@ -1,0 +1,36 @@
+<mat-card class="comment-form-card">
+	<mat-card-content>
+		<form [formGroup]="commentForm" (ngSubmit)="onSubmit()">
+			<mat-form-field appearance="outline" class="full-width">
+				<mat-label>{{ parentId ? "Repondre..." : "Ajouter un commentaire..." }}</mat-label>
+				<textarea
+					matInput
+					rows="3"
+					formControlName="content"
+					placeholder="Que pensez-vous ?"></textarea>
+				@if(commentForm.get('content')?.hasError('required') &&
+				commentForm.get('content')?.touched){
+				<mat-error>Le contenu est requis</mat-error>
+				}
+			</mat-form-field>
+
+			<div class="form-actions">
+				@if(parentId){
+				<button mat-button type="button" (click)="onCancel()">Annuler</button>
+				}
+
+				<button
+					mat-raised-button
+					color="primary"
+					type="submit"
+					[disabled]="commentForm.invalid || loadingSignal()">
+					@if(loadingSignal()){
+					<mat-spinner diameter="16"></mat-spinner>
+					}@else {
+					{{ parentId ? "Repondre" : "Commenter" }}
+					}
+				</button>
+			</div>
+		</form>
+	</mat-card-content>
+</mat-card>

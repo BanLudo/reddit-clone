@@ -16,12 +16,17 @@ export const routes: Routes = [
 			import("./composants/signup/signup.component").then((m) => m.SignupComponent),
 	},
 	{
+		path: "post/:id",
+		loadComponent: () =>
+			import("./composants/post-detail/post-detail.component").then((m) => m.PostDetailComponent),
+	},
+	{
 		path: "create-post",
 		loadComponent: () =>
 			import("./composants/create-post/create-post.component").then((m) => m.CreatePostComponent),
 	},
 	{
-		path: "*",
+		path: "**",
 		redirectTo: "",
 	},
 ];
