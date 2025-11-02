@@ -15,7 +15,8 @@
 						class="vote-score"
 						[class.positive]="comment.voteCount > 0"
 						[class.negative]="comment.voteCount < 0">
-						{{ comment.voteCount }}
+						{{ localVoteCount() }}
+						{{ localVoteCount() > 1 || localVoteCount() < -1 ? "points" : "point" }}
 					</span>
 					}
 				</div>
@@ -84,14 +85,23 @@
 					mat-icon-button
 					class="vote-button upvote"
 					[class.active]="userVote() === 'UPVOTE'"
+					[disabled]="votingInProgress()"
 					(click)="onVote(VoteType.UPVOTE)">
 					<mat-icon>keyboard_arrow_up</mat-icon>
 				</button>
 
+				<span
+					class="vote-count-inline"
+					[class.positive]="localVoteCount() > 0"
+					[class.negative]="localVoteCount() < 0">
+					{{ localVoteCount() }}
+				</span>
+
 				<button
 					mat-icon-button
-					class="vote-button upvote"
+					class="vote-button downvote"
 					[class.active]="userVote() === 'DOWNVOTE'"
+					[disabled]="votingInProgress()"
 					(click)="onVote(VoteType.DOWNVOTE)">
 					<mat-icon>keyboard_arrow_down</mat-icon>
 				</button>

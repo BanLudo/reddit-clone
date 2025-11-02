@@ -35,3 +35,4 @@ A Faire ==> Login html / component [FAIT + non testé], Sign Up html / component
 
 - ProfileComponent à créer et faire [A FAIRE]
 - Create les authGuard [A FAIRE]
+- A chaque refresh il faut se login [A FAIRE]

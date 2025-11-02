@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, Input, signal } from "@angular/core";
+import { Component, effect, inject, Input, signal } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatIconModule } from "@angular/material/icon";
@@ -10,13 +10,7 @@ import { VoteService } from "../../services/VoteService/vote.service";
 import { CommentService } from "../../services/CommentService/comment.service";
 import { CommentFormComponent } from "../comment-form/comment-form.component";
 import { VoteType } from "../../models/vote.model";
-import {
-	FormBuilder,
-	FormGroup,
-	Validators,
-	ɵInternalFormsSharedModule,
-	ReactiveFormsModule,
-} from "@angular/forms";
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from "@angular/forms";
 import { MatFormField, MatLabel, MatError } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
@@ -32,7 +26,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 		MatIconModule,
 		MatMenuModule,
 		CommentFormComponent,
-		ɵInternalFormsSharedModule,
 		ReactiveFormsModule,
 		MatFormField,
 		MatLabel,
@@ -62,6 +55,19 @@ export class CommentItemComponent {
 	userVote = signal<VoteType | null>(null);
 	isEditing = signal<boolean>(false);
 	editLoading = signal<boolean>(false);
+	localVoteCount = signal<number>(0);
+	votingInProgress = signal<boolean>(false);
+
+	constructor() {
+		effect(
+			() => {
+				if (this.comment) {
+					this.localVoteCount.set(this.comment.voteCount || 0);
+				}
+			},
+			{ allowSignalWrites: true }
+		);
+	}
 
 	//Form pour l'edition
 	editForm: FormGroup = this.fb.group({
@@ -100,23 +106,46 @@ export class CommentItemComponent {
 	}
 
 	onVote(voteType: VoteType) {
-		if (this.authService.isLoggedIn()) {
-			this.voteService.voteComment(this.comment.id, { voteType }).subscribe({
-				next: () => {
-					if (this.userVote() === voteType) {
-						this.userVote.set(null);
-					} else {
-						this.userVote.set(voteType);
-					}
-				},
-				error: (error) => {
-					this.snackBar.open("Error voting on comment", "Close", {
-						duration: 2000,
-					});
-					console.error("Error voting on comment : ", error);
-				},
-			});
+		if (!this.authService.isLoggedIn() || this.votingInProgress()) {
+			return;
 		}
+
+		this.votingInProgress.set(true);
+		const previousVote = this.userVote();
+		const currentCount = this.localVoteCount();
+
+		let newCount = currentCount;
+
+		if (previousVote === voteType) {
+			this.userVote.set(null);
+			newCount = currentCount - (voteType === VoteType.UPVOTE ? 1 : -1);
+		} else if (previousVote === null) {
+			this.userVote.set(voteType);
+			newCount = currentCount + (voteType === VoteType.UPVOTE ? 1 : -1);
+		} else {
+			this.userVote.set(voteType);
+			newCount = currentCount + (voteType === VoteType.UPVOTE ? 2 : -2);
+		}
+
+		//mise à jour de l'UI
+		this.localVoteCount.set(newCount);
+
+		this.voteService.voteComment(this.comment.id, { voteType }).subscribe({
+			next: () => {
+				this.votingInProgress.set(false);
+				this.comment.voteCount = newCount;
+				console.log(
+					`Vote enregistré pour le commentaire ${this.comment.id}. Nouveau total : ${newCount}`
+				);
+			},
+			error: (error) => {
+				console.error("Error voting on comment : ", error);
+				this.votingInProgress.set(false);
+
+				this.localVoteCount.set(currentCount);
+				this.userVote.set(previousVote);
+			},
+		});
 	}
 
 	toggleReply() {

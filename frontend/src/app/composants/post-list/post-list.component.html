@@ -31,11 +31,25 @@
 		<app-post-card
 			[post]="post"
 			[canDo]="authService.isLoggedIn()"
-			(vote)="onVote($event.postId, $event.voteType)"></app-post-card>
+			(voteChanged)="handleVoteChanged($event)"
+			(editRequested)="handleEditRequested($event)"
+			(deleteRequested)="handleDeleteRequested($event)"></app-post-card>
+		}@empty {
+		<div class="empty-state">
+			<mat-icon>post_add</mat-icon>
+			<h2>Aucun post disponible</h2>
+			<p>Soyez le premier à publier un post !</p>
+			@if(authService.isLoggedIn()){
+			<button mat-raised-button color="primary" routerLink="/create-post">
+				<mat-icon>add</mat-icon>
+				Créer le premier post
+			</button>
+			}
+		</div>
 		}
 	</div>
 
-	@if(hasMorePosts()){
+	@if(hasMorePosts() && postService.allPosts().length > 0){
 	<div class="load-more">
 		<button
 			mat-button
@@ -49,3 +63,5 @@
 	</div>
 	}
 </div>
+
+<!-- user1@gmail.com azerty -->

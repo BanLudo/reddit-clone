@@ -13,7 +13,7 @@ import { VoteType } from "../../models/vote.model";
 import { CommentService } from "../../services/CommentService/comment.service";
 import { VoteService } from "../../services/VoteService/vote.service";
 import { PostService } from "../../services/PostService/post.service";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, RouterModule } from "@angular/router";
 import { Comment } from "../../models/comment.model";
 
 @Component({
@@ -28,6 +28,7 @@ import { Comment } from "../../models/comment.model";
 		MatDividerModule,
 		CommentFormComponent,
 		CommentListComponent,
+		RouterModule,
 	],
 	templateUrl: "./post-detail.component.html",
 	styleUrl: "./post-detail.component.scss",

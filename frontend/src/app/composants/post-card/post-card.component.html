@@ -34,7 +34,7 @@
 				<span class="timestamp">{{ getRealTime(post.createdAt) }}</span>
 			</div>
 
-			@if(canDo){
+			@if(canDo && canEditPost()){
 			<button mat-icon-button [matMenuTriggerFor]="menu">
 				<mat-icon>more_vert</mat-icon>
 			</button>
@@ -44,7 +44,7 @@
 					<span>Modifier</span>
 				</button>
 				<button mat-menu-item (click)="onDelete()">
-					<mat-icon>delete</mat-icon>
+					<mat-icon color="warn">delete</mat-icon>
 					<span>Supprimer</span>
 				</button>
 			</mat-menu>
@@ -57,7 +57,7 @@
 		<div class="post-description" [innerHTML]="trunctateContent()"></div>
 		} @if(post.imageUrl){
 		<div class="post-image">
-			<img src="post.imageUrl" alt="post.title" (click)="onImageClick()" />
+			<img [src]="post.imageUrl" [alt]="post.title" (click)="onImageClick()" />
 		</div>
 		}
 

@@ -21,6 +21,11 @@ export const routes: Routes = [
 			import("./composants/post-detail/post-detail.component").then((m) => m.PostDetailComponent),
 	},
 	{
+		path: "edit-post/:id",
+		loadComponent: () =>
+			import("./composants/edit-post/edit-post.component").then((m) => m.EditPostComponent),
+	},
+	{
 		path: "create-post",
 		loadComponent: () =>
 			import("./composants/create-post/create-post.component").then((m) => m.CreatePostComponent),
