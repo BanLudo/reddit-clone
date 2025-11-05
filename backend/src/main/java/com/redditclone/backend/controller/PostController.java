@@ -58,6 +58,13 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/user/{userId}")
+    public Page<PostResponse> getPostsByUserId(@PathVariable Long userId,
+                                               @RequestParam(value = "page", defaultValue = "0") int page,
+                                               @RequestParam(value = "size", defaultValue = "10") int size){
+        return postService.getPostsByUserId(userId, page, size);
+    }
+
     /*
 
     @GetMapping("/user/{username}")

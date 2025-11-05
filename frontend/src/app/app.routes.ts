@@ -31,6 +31,11 @@ export const routes: Routes = [
 			import("./composants/create-post/create-post.component").then((m) => m.CreatePostComponent),
 	},
 	{
+		path: "profile",
+		loadComponent: () =>
+			import("./composants/profile/profile.component").then((m) => m.ProfileComponent),
+	},
+	{
 		path: "**",
 		redirectTo: "",
 	},

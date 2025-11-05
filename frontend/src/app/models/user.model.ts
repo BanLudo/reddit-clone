@@ -4,4 +4,8 @@ export interface User {
 	email: string;
 	UserProfile?: string;
 	createdAt: Date;
+	imageUrl?: string;
+
+	postCount?: number;
+	commentCount?: number;
 }

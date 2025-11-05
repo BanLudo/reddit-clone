@@ -9,6 +9,9 @@ public class UserProfile {
     private String profilePicture;
     private LocalDateTime createdAt;
 
+    private Long postCount;
+    private Long commentCount;
+
     public UserProfile() {}
 
     public UserProfile(Long id, String username, String email, String profilePicture, LocalDateTime createdAt) {
@@ -57,5 +60,21 @@ public class UserProfile {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Long getPostCount() {
+        return postCount;
+    }
+
+    public void setPostCount(Long postCount) {
+        this.postCount = postCount;
+    }
+
+    public Long getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(Long commentCount) {
+        this.commentCount = commentCount;
     }
 }

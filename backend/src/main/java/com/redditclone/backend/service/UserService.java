@@ -2,6 +2,8 @@ package com.redditclone.backend.service;
 
 import com.redditclone.backend.DTO.UserProfile;
 import com.redditclone.backend.model.User;
+import com.redditclone.backend.repository.CommentRepository;
+import com.redditclone.backend.repository.PostRepository;
 import com.redditclone.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -9,9 +11,13 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PostRepository postRepository, CommentRepository commentRepository) {
         this.userRepository = userRepository;
+        this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
     }
 
     public UserProfile getCurrentUser(UserPrincipal currentUser) {
@@ -28,6 +34,10 @@ public class UserService {
         userProfile.setEmail(user.getEmail());
         userProfile.setProfilePicture(user.getProfilePicture());
         userProfile.setCreatedAt(user.getCreatedAt());
+
+        //stats utilisateur
+        userProfile.setPostCount(postRepository.countByUserId(id));
+        userProfile.setCommentCount((long) commentRepository.findByUser_IdOrderByCreatedAtDesc(id).size());
 
         return userProfile;
     }

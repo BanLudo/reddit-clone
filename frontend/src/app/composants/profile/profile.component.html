@@ -1,0 +1,110 @@
+<div class="profile-container">
+	@if (loading()) {
+	<div class="loading-container">
+		<mat-spinner></mat-spinner>
+	</div>
+	}@else if (currentUser()) {
+	<mat-card class="profile-card">
+		<mat-card-content>
+			<div class="profile-header">
+				<div class="avatar-section">
+					@if (currentUser()!.imageUrl) {
+					<img
+						[src]="currentUser()!.imageUrl"
+						[alt]="currentUser()!.username"
+						class="profile-avatar" />
+					}@else {
+					<div class="default-avatar">
+						<mat-icon>account_circle</mat-icon>
+					</div>
+					}
+				</div>
+
+				<div class="profile-info">
+					<h1>{{ currentUser()!.username }}</h1>
+					<p class="email">{{ currentUser()!.email }}</p>
+					<p class="join-date">Membre depuis {{ formatDate(currentUser()!.createdAt) }}</p>
+
+					<div class="stats">
+						<div class="stat-item">
+							<span class="stat-value">{{ currentUser()!.postCount || 0 }}</span>
+							<span class="stat-label">Posts</span>
+						</div>
+
+						<mat-divider [vertical]="true"></mat-divider>
+
+						<div class="stat-item">
+							<span class="stat-value">{{ currentUser()!.commentCount || 0 }}</span>
+							<span class="stat-label">Commentaires</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="profile-actions">
+					<button mat-raised-button color="primary">
+						<mat-icon>edit</mat-icon>
+						Modifier le profil
+					</button>
+				</div>
+			</div>
+		</mat-card-content>
+	</mat-card>
+
+	<mat-card class="content-card">
+		<mat-tab-group (selectedTabChange)="onTabChange($event)">
+			<mat-tab label="Mes posts">
+				<div class="tab-content">
+					@if (loadingPosts()) {
+					<div class="loading-container">
+						<mat-spinner diameter="40"></mat-spinner>
+					</div>
+					}@else if (userPosts().length === 0) {
+					<div class="empty-state">
+						<mat-icon>post_add</mat-icon>
+						<h3>Aucun post publié</h3>
+						<p>Vous n'avez encore publié aucun post.</p>
+						<button mat-raised-button color="primary" routerLink="/create-post">
+							Créer votre premier post
+						</button>
+					</div>
+					}@else { @for (post of userPosts(); track post.id) {
+					<app-post-card [post]="post" [canDo]="true"></app-post-card>
+					} @if (hasMorePosts()) {
+					<div class="load-more">
+						<button
+							mat-button
+							color="primary"
+							(click)="loadMorePosts()"
+							[disabled]="loadingPosts()">
+							@if (loadingPosts()) {
+							<mat-spinner diameter="20"></mat-spinner>
+							}@else { Charger plus }
+						</button>
+					</div>
+					} }
+				</div>
+			</mat-tab>
+
+			<mat-tab label="Mes Commentaires">
+				<div class="tab-content">
+					<div class="empty-state">
+						<mat-icon>comment</mat-icon>
+						<h3>Aucun commentaire</h3>
+						<p>Vous n'avez encore posté aucun commentaire.</p>
+					</div>
+				</div>
+			</mat-tab>
+
+			<mat-tab label="Posts sauvegardés">
+				<div class="tab-content">
+					<div class="empty-state">
+						<mat-icon>bookmark</mat-icon>
+						<h3>Aucun post sauvegardé</h3>
+						<p>Les posts que vous sauvegardez apparaêtrong ici.</p>
+					</div>
+				</div>
+			</mat-tab>
+		</mat-tab-group>
+	</mat-card>
+	}
+</div>

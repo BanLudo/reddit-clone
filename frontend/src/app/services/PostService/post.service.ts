@@ -77,4 +77,10 @@ export class PostService {
 	refreshPosts(): void {
 		this.getAllPosts(0, 10).subscribe();
 	}
+
+	getPostsByUsersId(userId: number, page: number = 0, size: number = 10): Observable<PostPage> {
+		let params = new HttpParams().set("page", page.toString()).set("size", size.toString());
+
+		return this.http.get<PostPage>(`${this.API_URL}/user/${userId}`, { params });
+	}
 }

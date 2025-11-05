@@ -16,5 +16,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("select p from Post p order by p.voteCount desc, p.createdAt desc")
     Page<Post> findAllOrderByVoteCountDesc(Pageable pageable);
 
-    Page<Post> findByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
+    Page<Post> findByUser_IdOrderByCreatedAtDesc(Long userId, Pageable pageable);
+
+    Long countByUserId(Long userId);
 }

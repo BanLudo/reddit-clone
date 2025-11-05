@@ -96,15 +96,16 @@ public class PostService {
     }
 
 
-    /*
+    public Page<PostResponse> getPostsByUserId(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> posts = postRepository.findByUser_IdOrderByCreatedAtDesc(userId, pageable);
 
-    public Page<PostRequest> getAllPostsByUsers(String username, Pageable pageable) {
-        User user = userRepository.findByUsername(username)
-                                  .orElseThrow(()-> new UsernameNotFoundException("User not found"));
+        return posts.map(this::mapToPostResponse);
+    }
 
-        return postRepository.findByAuthor(user, pageable)
-                             .map(post -> new PostRequest(post));
-    }  */
+    public Long countUserPosts(Long userId) {
+        return postRepository.countByUserId(userId);
+    }
 
 
     private PostResponse mapToPostResponse(Post post) {
