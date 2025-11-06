@@ -1,9 +1,9 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, signal } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { Router, RouterModule } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { MatButton, MatAnchor } from "@angular/material/button";
 import { AuthServiceService } from "../../services/AuthService/auth-service.service";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
@@ -30,11 +30,14 @@ import { MatIconModule } from "@angular/material/icon";
 	templateUrl: "./login.component.html",
 	styleUrl: "./login.component.scss",
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 	private fb = inject(FormBuilder);
 	private router = inject(Router);
+	private activatedRoute = inject(ActivatedRoute);
 	private snackBar = inject(MatSnackBar);
 	private authService = inject(AuthServiceService);
+
+	private returnUrl: string = "/";
 
 	//signals
 	loading = signal<boolean>(false);
@@ -45,6 +48,16 @@ export class LoginComponent {
 		password: ["", [Validators.required]],
 	});
 
+	ngOnInit(): void {
+		if (this.authService.isLoggedIn()) {
+			//redirige si déjà connecté.
+			this.router.navigate(["/"]);
+			return;
+		}
+
+		this.returnUrl = this.activatedRoute.snapshot.queryParams["returnUrl"] || "/"; //url de retour depuis les query params
+	}
+
 	onSubmit(): void {
 		if (this.loginForm.valid) {
 			this.loading.set(true);
@@ -54,7 +67,7 @@ export class LoginComponent {
 			this.authService.login(loginRequest).subscribe({
 				next: () => {
 					this.loading.set(false);
-					this.router.navigate(["/"]);
+					this.router.navigateByUrl(this.returnUrl);
 					this.snackBar.open("Login successful", "Close", { duration: 3000 });
 				},
 				error: (error) => {

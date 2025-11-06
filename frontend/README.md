@@ -39,4 +39,4 @@ To get more help on the Angular CLI use `ng help` or go check out the
     - Tab "Posts sauvegardé" [A FAIRE]
 
 - Create les authGuard [fait mais pas testé]
-- A chaque refresh il faut se login [A FAIRE]
+- A chaque refresh il faut se login [fait mais pas testé]

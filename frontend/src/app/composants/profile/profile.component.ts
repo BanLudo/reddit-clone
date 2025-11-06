@@ -75,11 +75,15 @@ export class ProfileComponent implements OnInit {
 		} else {
 			this.authService.getCurrentUser().subscribe({
 				next: (user) => {
-					this.currentUser.set(user);
-					this.loading.set(false);
 					if (user) {
+						this.currentUser.set(user);
+						this.loading.set(false);
 						this.loadUserPosts();
 					}
+				},
+				error: (error) => {
+					console.error("Error loading user profile: ", error);
+					this.loading.set(false);
 				},
 			});
 		}
