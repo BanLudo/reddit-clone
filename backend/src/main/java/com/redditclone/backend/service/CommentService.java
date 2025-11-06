@@ -9,8 +9,10 @@ import com.redditclone.backend.repository.CommentRepository;
 import com.redditclone.backend.repository.PostRepository;
 import com.redditclone.backend.repository.UserRepository;
 import com.redditclone.backend.repository.VoteRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -117,20 +119,16 @@ public class CommentService {
         return commentResponse;
     }
 
-
-    /*
-
-    public List<CommentResponseDTO> getAllCommentsByUser(Long userId) {
-        User user = userRepository.findById(userId)
-                                  .orElseThrow(() -> new RuntimeException("User with Id " + userId + " Not Found"));
-
-        List<Comment> comments = commentRepository.findByAuthor_UserIdOrderByCreatedAtAsc(user.getUserId());
-
-        return comments.stream()
-                .map(com -> new CommentResponseDTO(com))
-                .toList();
+    public Page<CommentResponse> getCommentsByUserId(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Comment> comments = commentRepository.findByUser_IdOrderByCreatedAtDesc(userId, pageable);
+        return comments.map(this::mapToCommentResponse);
     }
 
+
+
+
+    /*
 
     public List<CommentResponseDTO> getAllRepliesByComment(Long commentId) {
         List<Comment> replies = commentRepository.findByParent_CommentIdOrderByCreatedAtAsc(commentId);

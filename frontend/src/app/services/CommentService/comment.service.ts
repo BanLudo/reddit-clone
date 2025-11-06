@@ -1,6 +1,6 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { inject, Injectable, signal } from "@angular/core";
-import { Comment, CommentRequest } from "../../models/comment.model";
+import { Comment, CommentPage, CommentRequest } from "../../models/comment.model";
 import { Observable, tap } from "rxjs";
 
 @Injectable({
@@ -66,6 +66,16 @@ export class CommentService {
 				this.loadingSignal.set(false);
 			})
 		);
+	}
+
+	getCommentsByUserId(
+		userId: number,
+		page: number = 0,
+		size: number = 10
+	): Observable<CommentPage> {
+		let params = new HttpParams().set("page", page.toString()).set("size", size.toString());
+
+		return this.http.get<CommentPage>(`${this.API_URL}/comments/user/${userId}`, { params });
 	}
 
 	private updateCommentInList(comments: Comment[], updatedComment: Comment): Comment[] {

@@ -15,6 +15,9 @@ public class CommentResponse {
     private Long parentId;
     private List<CommentResponse> replies;
 
+    private Long postId;
+    private String postTitle;
+
     public Long getId() {
         return id;
     }
@@ -85,5 +88,21 @@ public class CommentResponse {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Long getPostId() {
+        return postId;
+    }
+
+    public void setPostId(Long postId) {
+        this.postId = postId;
+    }
+
+    public String getPostTitle() {
+        return postTitle;
+    }
+
+    public void setPostTitle(String postTitle) {
+        this.postTitle = postTitle;
     }
 }

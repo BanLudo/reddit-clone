@@ -1,5 +1,5 @@
 import { Component, inject } from "@angular/core";
-import { RouterLink, RouterOutlet } from "@angular/router";
+import { RouterModule, RouterOutlet } from "@angular/router";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { CommonModule } from "@angular/common";
 import { AuthServiceService } from "./services/AuthService/auth-service.service";
@@ -16,8 +16,8 @@ import { MatButtonModule } from "@angular/material/button";
 		CommonModule,
 		MatIconModule,
 		MatMenuModule,
-		RouterLink,
 		MatButtonModule,
+		RouterModule,
 	],
 	templateUrl: "./app.component.html",
 	styleUrl: "./app.component.scss",

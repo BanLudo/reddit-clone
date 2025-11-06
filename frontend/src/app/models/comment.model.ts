@@ -14,9 +14,20 @@ export interface Comment {
 	updatedAt: Date;
 	parentId?: number;
 	replies: Comment[];
+
+	postId?: number;
+	postTitle?: string;
 }
 
 export interface CommentRequest {
 	content: string;
 	parentId?: number;
+}
+
+export interface CommentPage {
+	content: Comment[];
+	totalElements: number;
+	totalPages: number;
+	size: number;
+	number: number;
 }

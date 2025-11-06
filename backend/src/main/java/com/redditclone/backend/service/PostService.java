@@ -104,7 +104,7 @@ public class PostService {
     }
 
     public Long countUserPosts(Long userId) {
-        return postRepository.countByUserId(userId);
+        return postRepository.countByUser_Id(userId);
     }
 
 

@@ -52,6 +52,7 @@
 
 	<mat-card class="content-card">
 		<mat-tab-group (selectedTabChange)="onTabChange($event)">
+			<!-- TAB 1 : mes posts -->
 			<mat-tab label="Mes posts">
 				<div class="tab-content">
 					@if (loadingPosts()) {
@@ -84,23 +85,79 @@
 					} }
 				</div>
 			</mat-tab>
-
+			<!-- TAB 2 : mes commentaires -->
 			<mat-tab label="Mes Commentaires">
 				<div class="tab-content">
+					@if(loadingComments()){
+					<div class="loading-container">
+						<mat-spinner diameter="40"></mat-spinner>
+					</div>
+					}@else if (userComments().length ===0) {
 					<div class="empty-state">
 						<mat-icon>comment</mat-icon>
 						<h3>Aucun commentaire</h3>
 						<p>Vous n'avez encore posté aucun commentaire.</p>
 					</div>
+					}@else {
+					<div class="comments-list">
+						@for (comment of userComments(); track comment.id) {
+						<mat-card class="comment-card">
+							<mat-card-content>
+								<div class="comment-header">
+									<span class="post-link" [routerLink]="['/post', comment.postId]">
+										{{ comment.postTitle }}
+									</span>
+									<span class="comment-date">{{ getRelativeTime(comment.createdAt) }}</span>
+								</div>
+								<div class="comment-content">{{ comment.content }}</div>
+								<div class="comment-footer">
+									<span
+										class="vote-info"
+										[class.positive]="comment.voteCount > 0"
+										[class.negative]="comment.voteCount < 0">
+										<mat-icon>arrow_upward</mat-icon>
+										{{ comment.voteCount }} points
+									</span>
+									<button mat-button color="primary" [routerLink]="['/post', comment.postId]">
+										Voir le post
+									</button>
+								</div>
+							</mat-card-content>
+						</mat-card>
+						} @if (hasMoreComments()) {
+						<div class="load-more">
+							<button
+								mat-button
+								color="primary"
+								(click)="loadMoreComment()"
+								[disabled]="loadingComments()">
+								@if (loadingComments()) {
+								<mat-spinner diameter="20"></mat-spinner>
+								}@else { Charger plus }
+							</button>
+						</div>
+						}
+					</div>
+					}
 				</div>
 			</mat-tab>
 
+			<!-- TAB 3 : Post sauvegardés -->
 			<mat-tab label="Posts sauvegardés">
 				<div class="tab-content">
 					<div class="empty-state">
 						<mat-icon>bookmark</mat-icon>
-						<h3>Aucun post sauvegardé</h3>
+						<h3>Fonctionnalité à venir</h3>
 						<p>Les posts que vous sauvegardez apparaêtrong ici.</p>
+						<p class="info-text">
+							💡 Pour implémenter cette fonctionnalité, il faudrait :
+							<br />
+							1. Ajouter une table "saved_posts" dans la base de données
+							<br />
+							2. Créer les endpoints backend pour sauvegarder/récupérer
+							<br />
+							3. Ajouter un bouton "Sauvegarder" sur chaque post
+						</p>
 					</div>
 				</div>
 			</mat-tab>

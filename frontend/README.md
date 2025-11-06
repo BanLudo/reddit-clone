@@ -31,10 +31,12 @@ need to first add a package that implements end-to-end testing capabilities.
 To get more help on the Angular CLI use `ng help` or go check out the
 [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
 
-- ProfileComponent à créer et faire [A FAIRE]
+- ProfileComponent à créer et faire [fait mais non teste]
 
-  - Sur le changement de tabulation : - Tab "mes posts" - [A FAIRE] - Tab 'Mes commentaires' [A
-    FAIRE] - Tab "Posts sauvegardé" [A FAIRE]
+  - Sur le changement de tabulation :
+    - Tab "mes posts" - [fait mais non teste]
+    - Tab 'Mes commentaires' [fait mais non teste]
+    - Tab "Posts sauvegardé" [A FAIRE]
 
-- Create les authGuard [A FAIRE]
+- Create les authGuard [fait mais pas testé]
 - A chaque refresh il faut se login [A FAIRE]
